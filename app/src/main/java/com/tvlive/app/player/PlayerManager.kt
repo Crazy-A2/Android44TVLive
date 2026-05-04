@@ -24,6 +24,7 @@ class PlayerManager {
             override fun surfaceChanged(holder: SurfaceHolder, fmt: Int, w: Int, h: Int) {}
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 player?.pause()
+                player?.setDisplay(null)
             }
         })
     }

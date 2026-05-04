@@ -78,6 +78,7 @@ class ChannelListOverlay(
         recycler.adapter = adapter
         recycler.setHasFixedSize(true)
         recycler.setItemViewCacheSize(5)
+        recycler.setItemAnimator(null)
     }
 
     private fun setupCategoryTabs() {

@@ -18,6 +18,10 @@ class ChannelListAdapter(
 
     private var selectedPosition: Int = -1
 
+    init {
+        setHasStableIds(true)
+    }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val numberText: TextView = itemView.findViewById(R.id.item_channel_number)
         val nameText: TextView = itemView.findViewById(R.id.item_channel_name)
@@ -47,6 +51,8 @@ class ChannelListAdapter(
             onChannelClick(channel)
         }
     }
+
+    override fun getItemId(position: Int): Long = channels[position].id
 
     override fun getItemCount(): Int = channels.size
 
