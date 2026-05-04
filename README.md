@@ -80,9 +80,13 @@ app/src/main/java/com/tvlive/app/
     └── presenter/            # MVP Presenter
 ```
 
-## 架构
+## 文档
 
-MVP 架构，详细说明见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+| 文档 | 说明 |
+|------|------|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | MVP 架构、模块职责、关键约束 |
+| [docs/PROGRESS.md](docs/PROGRESS.md) | 项目开发进度追踪 |
+| [docs/superpowers/specs/2026-05-05-tv-live-design.md](docs/superpowers/specs/2026-05-05-tv-live-design.md) | 产品设计文档：交互模型、按键映射、技术方案 |
 
 ## License
 
