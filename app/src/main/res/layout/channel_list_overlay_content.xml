@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#88000000">
+
+    <!-- 右侧频道列表面板 -->
+    <RelativeLayout
+        android:id="@+id/channel_panel"
+        android:layout_width="45%"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="#DD1A1A1A">
+
+        <!-- 分类标签 -->
+        <HorizontalScrollView
+            android:id="@+id/category_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FF2A2A2A"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/category_tabs"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <!-- 频道列表 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/channel_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/category_scroll"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp" />
+    </RelativeLayout>
+</RelativeLayout>

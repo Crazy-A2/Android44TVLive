@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/channel_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:focusable="true"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp">
+
+    <TextView
+        android:id="@+id/item_channel_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:textColor="#FFAAAAAA"
+        android:gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/item_channel_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/item_channel_number"
+        android:layout_marginStart="12dp"
+        android:textSize="20sp"
+        android:textColor="#FFFFFFFF"
+        android:gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/item_fav_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textSize="20sp"
+        android:text="★"
+        android:textColor="#FFD700"
+        android:visibility="gone" />
+</RelativeLayout>

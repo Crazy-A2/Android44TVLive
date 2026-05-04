@@ -17,8 +17,10 @@ import com.tvlive.app.data.parser.M3uParser
 import com.tvlive.app.player.PlayerCallback
 import com.tvlive.app.player.PlayerManager
 import com.tvlive.app.ui.osd.ChannelInfoBar
+import com.tvlive.app.ui.osd.ChannelListOverlay
 import com.tvlive.app.ui.osd.ChannelNumberInput
 import com.tvlive.app.ui.osd.OsdManager
+import com.tvlive.app.ui.presenter.ChannelListPresenter
 import com.tvlive.app.ui.presenter.LivePlayerPresenter
 import com.tvlive.app.util.PreferenceHelper
 
@@ -26,17 +28,19 @@ class LivePlayerActivity : AppCompatActivity() {
 
     private lateinit var root: FrameLayout
     private lateinit var surfaceView: SurfaceView
-    private lateinit var channelInfoBar: FrameLayout
+    private lateinit var channelInfoBarContainer: FrameLayout
     private lateinit var volumeBarContainer: FrameLayout
     private lateinit var channelNumberInputContainer: FrameLayout
-    private lateinit var channelListOverlay: FrameLayout
+    private lateinit var channelListOverlayContainer: FrameLayout
     private lateinit var settingsOverlay: FrameLayout
     private lateinit var statusMessage: TextView
 
     private lateinit var playerManager: PlayerManager
     private lateinit var presenter: LivePlayerPresenter
+    private lateinit var channelListPresenter: ChannelListPresenter
     private lateinit var channelNumberInput: ChannelNumberInput
     private lateinit var channelInfoBar: ChannelInfoBar
+    private lateinit var channelListOverlay: ChannelListOverlay
     private lateinit var osdManager: OsdManager
     private lateinit var prefs: PreferenceHelper
     private val handler = Handler()
@@ -48,16 +52,23 @@ class LivePlayerActivity : AppCompatActivity() {
 
         root = findViewById(R.id.root)
         surfaceView = findViewById(R.id.surface_view)
-        channelInfoBar = findViewById(R.id.channel_info_bar)
+        channelInfoBarContainer = findViewById(R.id.channel_info_bar)
         volumeBarContainer = findViewById(R.id.volume_bar_container)
         channelNumberInputContainer = findViewById(R.id.channel_number_input_container)
-        channelListOverlay = findViewById(R.id.channel_list_overlay)
+        channelListOverlayContainer = findViewById(R.id.channel_list_overlay)
         settingsOverlay = findViewById(R.id.settings_overlay)
         statusMessage = findViewById(R.id.status_message)
 
         prefs = PreferenceHelper(this)
         channelNumberInput = ChannelNumberInput(channelNumberInputContainer)
-        channelInfoBar = ChannelInfoBar(channelInfoBar)
+        channelInfoBar = ChannelInfoBar(channelInfoBarContainer)
+
+        channelListPresenter = ChannelListPresenter(
+            TvliveApp.db.channelDao(),
+            TvliveApp.db.favoriteDao(),
+            TvliveApp.db.sourceDao()
+        )
+
         osdManager = OsdManager(handler)
         osdManager.onStateChanged = { state ->
             when (state) {
@@ -65,11 +76,27 @@ class LivePlayerActivity : AppCompatActivity() {
                     presenter.getCurrentChannel()?.channelNumber ?: 0,
                     presenter.getCurrentChannel()?.name ?: ""
                 )
-                OsdManager.OsdState.IDLE -> channelInfoBar.hide()
+                OsdManager.OsdState.IDLE -> {
+                    channelInfoBar.hide()
+                    if (::channelListOverlay.isInitialized && channelListOverlay.isVisible()) {
+                        channelListOverlay.close()
+                    }
+                }
                 else -> {}
             }
         }
-        initPlayer()
+
+        channelListOverlay = ChannelListOverlay(
+            container = channelListOverlayContainer,
+            presenter = channelListPresenter,
+            osdManager = osdManager,
+            onChannelSelected = { channel ->
+                presenter.playChannel(channel)
+                osdManager.hide()
+            },
+            getCurrentChannelId = { presenter.getCurrentChannel()?.id ?: -1L }
+        )
+
         presenter = LivePlayerPresenter(this, playerManager, prefs)
         presenter.init()
         loadAndPlay()
@@ -162,9 +189,26 @@ class LivePlayerActivity : AppCompatActivity() {
                 presenter.startNumberInput(9)
                 return true
             }
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+                if (!channelListOverlay.isVisible()) {
+                    channelListPresenter.init()
+                    channelListOverlay.show()
+                } else {
+                    channelListOverlay.close()
+                }
+                return true
+            }
+            KeyEvent.KEYCODE_MENU -> {
+                // 步骤 3.4 实现设置覆盖层
+                return true
+            }
             KeyEvent.KEYCODE_BACK -> {
                 if (channelNumberInputContainer.visibility == View.VISIBLE) {
                     presenter.cancelNumberInput()
+                    return true
+                }
+                if (channelListOverlay.isVisible()) {
+                    channelListOverlay.close()
                     return true
                 }
             }
@@ -185,8 +229,8 @@ class LivePlayerActivity : AppCompatActivity() {
             presenter.cancelNumberInput()
             return
         }
-        if (channelListOverlay.visibility == View.VISIBLE) {
-            channelListOverlay.visibility = View.GONE
+        if (channelListOverlay.isVisible()) {
+            channelListOverlay.close()
             return
         }
         if (settingsOverlay.visibility == View.VISIBLE) {

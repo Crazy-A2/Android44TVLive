@@ -28,7 +28,7 @@
 
 ## 进行中
 
-### 🔄 步骤 3.2：实现 ChannelListOverlay
+### 🔄 步骤 3.4：实现 SettingsOverlay
 - 待开始
 
 ---
@@ -39,10 +39,10 @@
 - 步骤 2.4 — 源自动切换（SourceRepository、播放失败自动切换备用源）
 
 ### 阶段 3：OSD 覆盖层
-- 步骤 3.1 — OsdManager + ChannelInfoBar（顶部频道信息条，3 秒自动隐藏）**[已完成]**
-- 步骤 3.2 — ChannelListOverlay（右侧频道列表，分类浏览、收藏）**[进行中]**
+- 步骤 3.1 — OsdManager + ChannelInfoBar **[已完成]**
+- 步骤 3.2 — ChannelListOverlay（右侧频道列表，分类浏览、收藏）**[已完成]**
 - 步骤 3.3 — VolumeBar + ChannelNumberInput（音量条、频道号输入）**[ChannelNumberInput 已完成]**
-- 步骤 3.4 — SettingsOverlay（解码模式、源管理、关于）
+- 步骤 3.4 — SettingsOverlay（解码模式、源管理、关于）**[进行中]**
 
 ### 阶段 4：源管理
 - 步骤 4.1 — JsonSourceParser（JSON 格式直播源解析）
