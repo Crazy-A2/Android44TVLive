@@ -32,5 +32,9 @@
         <service
             android:name=".service.SourceUpdateService"
             android:exported="false" />
+
+        <receiver
+            android:name=".service.SourceHealthChecker"
+            android:exported="false" />
     </application>
 </manifest>
