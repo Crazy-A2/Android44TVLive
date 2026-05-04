@@ -20,8 +20,10 @@ import com.tvlive.app.ui.osd.ChannelInfoBar
 import com.tvlive.app.ui.osd.ChannelListOverlay
 import com.tvlive.app.ui.osd.ChannelNumberInput
 import com.tvlive.app.ui.osd.OsdManager
+import com.tvlive.app.ui.osd.SettingsOverlay
 import com.tvlive.app.ui.osd.VolumeBar
 import com.tvlive.app.ui.presenter.ChannelListPresenter
+import com.tvlive.app.ui.presenter.SettingsPresenter
 import com.tvlive.app.ui.presenter.LivePlayerPresenter
 import com.tvlive.app.util.PreferenceHelper
 
@@ -43,6 +45,8 @@ class LivePlayerActivity : AppCompatActivity() {
     private lateinit var channelInfoBar: ChannelInfoBar
     private lateinit var volumeBar: VolumeBar
     private lateinit var channelListOverlay: ChannelListOverlay
+    private lateinit var settingsOverlayObj: SettingsOverlay
+    private lateinit var settingsPresenter: SettingsPresenter
     private lateinit var osdManager: OsdManager
     private lateinit var prefs: PreferenceHelper
     private val handler = Handler()
@@ -88,6 +92,9 @@ class LivePlayerActivity : AppCompatActivity() {
                     if (::channelListOverlay.isInitialized && channelListOverlay.isVisible()) {
                         channelListOverlay.close()
                     }
+                    if (::settingsOverlayObj.isInitialized && settingsOverlayObj.isVisible()) {
+                        settingsOverlayObj.close()
+                    }
                 }
                 else -> {}
             }
@@ -102,6 +109,16 @@ class LivePlayerActivity : AppCompatActivity() {
                 osdManager.hide()
             },
             getCurrentChannelId = { presenter.getCurrentChannel()?.id ?: -1L }
+        )
+
+        settingsPresenter = SettingsPresenter(
+            TvliveApp.db.sourceConfigDao(),
+            prefs
+        )
+        settingsOverlayObj = SettingsOverlay(
+            container = settingsOverlay,
+            presenter = settingsPresenter,
+            osdManager = osdManager
         )
 
         presenter = LivePlayerPresenter(this, playerManager, prefs)
@@ -206,7 +223,7 @@ class LivePlayerActivity : AppCompatActivity() {
                 return true
             }
             KeyEvent.KEYCODE_MENU -> {
-                // 步骤 3.4 实现设置覆盖层
+                settingsOverlayObj.show()
                 return true
             }
             KeyEvent.KEYCODE_BACK -> {
@@ -240,8 +257,8 @@ class LivePlayerActivity : AppCompatActivity() {
             channelListOverlay.close()
             return
         }
-        if (settingsOverlay.visibility == View.VISIBLE) {
-            settingsOverlay.visibility = View.GONE
+        if (settingsOverlayObj.isVisible()) {
+            settingsOverlayObj.close()
             return
         }
         super.onBackPressed()
