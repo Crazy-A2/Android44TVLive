@@ -28,7 +28,7 @@
 
 ## 进行中
 
-### 🔄 步骤 4.3：实现 SourceHealthChecker
+### 🔄 步骤 4.4：联通源健康检测与自动修复完整流程
 - 待开始
 
 ---
@@ -46,9 +46,9 @@
 
 ### 阶段 4：源管理
 - 步骤 4.1 — JsonSourceParser **[已完成]**
-- 步骤 4.2 — SourceUpdateService（HttpClient、SourceFetcher、SourceUpdateRepository）**[已完成]**
-- 步骤 4.3 — SourceHealthChecker **[进行中]**
-- 步骤 4.4 — 联通源健康检测与自动修复完整流程
+- 步骤 4.2 — SourceUpdateService **[已完成]**
+- 步骤 4.3 — SourceHealthChecker（AlarmManager 定时检测、HEAD 探活、失效删除）**[已完成]**
+- 步骤 4.4 — 联通源健康检测与自动修复完整流程 **[进行中]**
 
 ### 阶段 5：收藏、历史与收尾
 - 步骤 5.1 — 收藏功能（长按 OK 添加/取消收藏）
