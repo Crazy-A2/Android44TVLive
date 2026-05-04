@@ -27,27 +27,78 @@ Android 4.4.2+ 电视直播应用，面向遥控器操作，开机即播。
 
 ## 构建
 
+### 环境要求
+
+- **JDK 8**（AGP 3.6.4 不支持 JDK 9+）
+- **Android SDK**：API 28（compileSdk） + Build-Tools 28.0.3
+- **Gradle**：5.6.4（项目未包含 `gradlew`，需本地安装或生成 wrapper）
+
 ```bash
-# Debug
+# 生成 Gradle Wrapper（首次使用）
+gradle wrapper --gradle-version 5.6.4
+
+# Debug APK
 ./gradlew assembleDebug
 
-# Release（ProGuard 混淆）
+# Release APK（ProGuard 混淆，规则见 app/proguard-rules.pro）
 ./gradlew assembleRelease
 ```
 
-APK 输出：`app/build/outputs/apk/`
+| 构建类型 | 输出路径 | 说明 |
+|---------|---------|------|
+| Debug | `app/build/outputs/apk/debug/` | 未混淆，可调试 |
+| Release | `app/build/outputs/apk/release/` | ProGuard 混淆，需签名 |
+
+> **Release 签名**：在 `app/build.gradle` 中配置 `signingConfigs`，或使用 Android Studio 的 Generate Signed Bundle 菜单。
+
+### Gradle 依赖同步
+
+修改 `build.gradle` 后新依赖需要同步：
+
+```bash
+./gradlew build --refresh-dependencies
+```
 
 ## 测试
 
+共 **101 个测试用例**，10 个测试类（9 个 JVM 单元测试 + 1 个 Android 仪器测试）。
+
+### JVM 单元测试
+
+纯逻辑测试，无需设备，秒级执行：
+
+| 测试类 | 用例数 | 覆盖范围 |
+|--------|-------|---------|
+| `M3uParserTest` | 10 | M3U 格式解析（标准/异常/空输入） |
+| `StreamTypeDetectorTest` | 10 | 流类型检测（HLS/RTMP/RTSP/HTTP-FLV） |
+| `JsonSourceParserTest` | 9 | JSON 源格式解析 |
+| `SourceRepositoryTest` | 14 | 源查询、优先级排序、失效切换 |
+| `SourceUpdateRepositoryTest` | 7 | 源合并、去重、ETag 缓存逻辑 |
+| `SourceHealthCheckerTest` | 5 | 健康检测探活、失效清理规则 |
+| `OsdManagerTest` | 10 | OSD 状态机切换、超时恢复 |
+| `ChannelListPresenterTest` | 8 | 频道列表分类、过滤、排序 |
+| `SettingsPresenterTest` | 11 | 设置读写、解码模式切换 |
+
 ```bash
-# JVM 单元测试（Parser、Presenter、Repository 等）
+# 全部 JVM 测试
 ./gradlew test
 
-# Android 仪器测试（DAO）
-./gradlew connectedAndroidTest
+# 运行指定测试类
+./gradlew test --tests "com.tvlive.app.data.parser.M3uParserTest"
+
+# 测试报告：app/build/reports/tests/
 ```
 
-共 **107 个测试用例**，10 个测试类。
+### Android 仪器测试
+
+`ChannelDaoTest`（17 个用例）— Room DAO 的 CRUD、查询、索引约束验证。需要连接 Android 设备或启动模拟器（API 19+）。
+
+```bash
+# 连接设备后执行
+./gradlew connectedAndroidTest
+
+# 测试报告：app/build/reports/androidTests/
+```
 
 ## 遥控器操作
 
