@@ -12,19 +12,23 @@
 - 步骤 1.2 — 实现数据库层（Entity、DAO、AppDatabase、TvliveApp）
 - 步骤 1.3 — 实现 LivePlayerActivity 基本布局（全屏横屏、SurfaceView、状态栏隐藏）
 
-### ✅ 阶段 2：播放核心（部分）
+### ✅ 阶段 2：播放核心
 - 步骤 2.1 — 集成 IJKPlayer，实现 PlayerManager（含回调接口、解码模式、优化参数）
 - 步骤 2.2 — 实现内置源加载与启动播放（assets/builtin_sources.m3u、M3uParser、首次启动自动播放）
 - 步骤 2.3 — 实现遥控器换台与音量调节（LivePlayerPresenter、ChannelNumberInput、按键分发）
+- 步骤 2.4 — 实现源自动切换（SourceRepository、播放失败自动切换备用源、优先级动态调整）
 
 ### 测试
-- 尚未编写测试代码
+- StreamTypeDetectorTest（JVM）：9 个用例
+- M3uParserTest（JVM）：10 个用例
+- SourceRepositoryTest（JVM）：14 个用例
+- ChannelDaoTest（Android）：15 个用例
 
 ---
 
 ## 进行中
 
-### 🔄 步骤 2.4：实现源自动切换
+### 🔄 步骤 3.2：实现 ChannelListOverlay
 - 待开始
 
 ---
@@ -35,9 +39,9 @@
 - 步骤 2.4 — 源自动切换（SourceRepository、播放失败自动切换备用源）
 
 ### 阶段 3：OSD 覆盖层
-- 步骤 3.1 — OsdManager + ChannelInfoBar（顶部频道信息条，3 秒自动隐藏）
-- 步骤 3.2 — ChannelListOverlay（右侧频道列表，分类浏览、收藏）
-- 步骤 3.3 — VolumeBar + ChannelNumberInput（音量条、频道号输入）
+- 步骤 3.1 — OsdManager + ChannelInfoBar（顶部频道信息条，3 秒自动隐藏）**[已完成]**
+- 步骤 3.2 — ChannelListOverlay（右侧频道列表，分类浏览、收藏）**[进行中]**
+- 步骤 3.3 — VolumeBar + ChannelNumberInput（音量条、频道号输入）**[ChannelNumberInput 已完成]**
 - 步骤 3.4 — SettingsOverlay（解码模式、源管理、关于）
 
 ### 阶段 4：源管理

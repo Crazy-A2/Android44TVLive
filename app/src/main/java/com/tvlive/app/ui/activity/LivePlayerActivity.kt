@@ -16,7 +16,9 @@ import com.tvlive.app.data.db.entity.Source
 import com.tvlive.app.data.parser.M3uParser
 import com.tvlive.app.player.PlayerCallback
 import com.tvlive.app.player.PlayerManager
+import com.tvlive.app.ui.osd.ChannelInfoBar
 import com.tvlive.app.ui.osd.ChannelNumberInput
+import com.tvlive.app.ui.osd.OsdManager
 import com.tvlive.app.ui.presenter.LivePlayerPresenter
 import com.tvlive.app.util.PreferenceHelper
 
@@ -34,6 +36,8 @@ class LivePlayerActivity : AppCompatActivity() {
     private lateinit var playerManager: PlayerManager
     private lateinit var presenter: LivePlayerPresenter
     private lateinit var channelNumberInput: ChannelNumberInput
+    private lateinit var channelInfoBar: ChannelInfoBar
+    private lateinit var osdManager: OsdManager
     private lateinit var prefs: PreferenceHelper
     private val handler = Handler()
     private var hideStatusRunnable: Runnable? = null
@@ -53,6 +57,18 @@ class LivePlayerActivity : AppCompatActivity() {
 
         prefs = PreferenceHelper(this)
         channelNumberInput = ChannelNumberInput(channelNumberInputContainer)
+        channelInfoBar = ChannelInfoBar(channelInfoBar)
+        osdManager = OsdManager(handler)
+        osdManager.onStateChanged = { state ->
+            when (state) {
+                OsdManager.OsdState.CHANNEL_INFO -> channelInfoBar.show(
+                    presenter.getCurrentChannel()?.channelNumber ?: 0,
+                    presenter.getCurrentChannel()?.name ?: ""
+                )
+                OsdManager.OsdState.IDLE -> channelInfoBar.hide()
+                else -> {}
+            }
+        }
         initPlayer()
         presenter = LivePlayerPresenter(this, playerManager, prefs)
         presenter.init()
@@ -282,7 +298,7 @@ class LivePlayerActivity : AppCompatActivity() {
     }
 
     fun showChannelInfo(channel: Channel) {
-        showStatusMessage("${channel.channelNumber} ${channel.name}", 3000)
+        osdManager.show(OsdManager.OsdState.CHANNEL_INFO, 3000)
     }
 
     fun showVolumeBar(percent: Int) {
