@@ -29,6 +29,9 @@ class LivePlayerPresenter(
     private val numberInputBuffer = StringBuilder()
     private var numberInputRunnable: Runnable? = null
 
+    var onNoSourcesAvailable: (() -> Unit)? = null
+    private var retryRunnable: Runnable? = null
+
     fun init() {
         Thread {
             channels = TvliveApp.db.channelDao().getAllOrdered()
@@ -124,10 +127,34 @@ class LivePlayerPresenter(
                     playerManager.play(next.url)
                     activity.showStatusMessage("正在切换源...")
                 } else {
-                    activity.showStatusMessage("该频道暂无可用源")
+                    currentSourceId = -1L
+                    activity.showStatusMessage("该频道暂无可用源，正在更新...")
+                    onNoSourcesAvailable?.invoke()
+                    scheduleRetry(channel.id)
                 }
             }
         }.start()
+    }
+
+    private fun scheduleRetry(channelId: Long) {
+        retryRunnable?.let { handler.removeCallbacks(it) }
+        val runnable = Runnable {
+            playChannel(channels.find { it.id == channelId })
+        }
+        retryRunnable = runnable
+        handler.postDelayed(runnable, 5 * 60 * 1000L)
+    }
+
+    fun onSourcesUpdated() {
+        val channel = getCurrentChannel()
+        if (channel != null) {
+            playChannel(channel)
+        }
+    }
+
+    fun cancelRetry() {
+        retryRunnable?.let { handler.removeCallbacks(it) }
+        retryRunnable = null
     }
 
     fun onPlaybackPrepared() {

@@ -1,7 +1,12 @@
 package com.tvlive.app.ui.activity
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.content.LocalBroadcastManager
 import android.view.KeyEvent
 import android.view.SurfaceView
 import android.view.View
@@ -20,6 +25,7 @@ import com.tvlive.app.ui.osd.ChannelInfoBar
 import com.tvlive.app.ui.osd.ChannelListOverlay
 import com.tvlive.app.ui.osd.ChannelNumberInput
 import com.tvlive.app.ui.osd.OsdManager
+import com.tvlive.app.service.SourceUpdateService
 import com.tvlive.app.ui.osd.SettingsOverlay
 import com.tvlive.app.ui.osd.VolumeBar
 import com.tvlive.app.ui.presenter.ChannelListPresenter
@@ -51,6 +57,7 @@ class LivePlayerActivity : AppCompatActivity() {
     private lateinit var prefs: PreferenceHelper
     private val handler = Handler()
     private var hideStatusRunnable: Runnable? = null
+    private var updateReceiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,6 +130,25 @@ class LivePlayerActivity : AppCompatActivity() {
 
         presenter = LivePlayerPresenter(this, playerManager, prefs)
         presenter.init()
+        presenter.onNoSourcesAvailable = {
+            val intent = Intent(this, SourceUpdateService::class.java)
+            intent.action = SourceUpdateService.ACTION_UPDATE_ALL
+            startService(intent)
+        }
+
+        // 注册源更新完成广播
+        updateReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (intent.action == SourceUpdateService.BROADCAST_UPDATE_COMPLETE) {
+                    presenter.onSourcesUpdated()
+                }
+            }
+        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            updateReceiver!!,
+            IntentFilter(SourceUpdateService.BROADCAST_UPDATE_COMPLETE)
+        )
+
         loadAndPlay()
         hideSystemUI()
     }
@@ -141,6 +167,11 @@ class LivePlayerActivity : AppCompatActivity() {
         super.onDestroy()
         playerManager.release()
         handler.removeCallbacksAndMessages(null)
+        updateReceiver?.let {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(it)
+            updateReceiver = null
+        }
+        presenter.cancelRetry()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -242,7 +273,15 @@ class LivePlayerActivity : AppCompatActivity() {
 
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
-            // 长按 OK：收藏/取消收藏（步骤 5.1 实现）
+            val channel = presenter.getCurrentChannel()
+            if (channel != null) {
+                channelListPresenter.toggleFavorite(channel.id)
+                val msg = if (channelListPresenter.isFavorite(channel.id)) "已收藏" else "已取消收藏"
+                showStatusMessage(msg, 2000)
+                if (channelListOverlay.isVisible()) {
+                    channelListOverlay.refreshData()
+                }
+            }
             return true
         }
         return super.onKeyLongPress(keyCode, event)
