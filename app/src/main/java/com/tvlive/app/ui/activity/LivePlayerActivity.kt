@@ -20,6 +20,7 @@ import com.tvlive.app.ui.osd.ChannelInfoBar
 import com.tvlive.app.ui.osd.ChannelListOverlay
 import com.tvlive.app.ui.osd.ChannelNumberInput
 import com.tvlive.app.ui.osd.OsdManager
+import com.tvlive.app.ui.osd.VolumeBar
 import com.tvlive.app.ui.presenter.ChannelListPresenter
 import com.tvlive.app.ui.presenter.LivePlayerPresenter
 import com.tvlive.app.util.PreferenceHelper
@@ -40,6 +41,7 @@ class LivePlayerActivity : AppCompatActivity() {
     private lateinit var channelListPresenter: ChannelListPresenter
     private lateinit var channelNumberInput: ChannelNumberInput
     private lateinit var channelInfoBar: ChannelInfoBar
+    private lateinit var volumeBar: VolumeBar
     private lateinit var channelListOverlay: ChannelListOverlay
     private lateinit var osdManager: OsdManager
     private lateinit var prefs: PreferenceHelper
@@ -62,6 +64,7 @@ class LivePlayerActivity : AppCompatActivity() {
         prefs = PreferenceHelper(this)
         channelNumberInput = ChannelNumberInput(channelNumberInputContainer)
         channelInfoBar = ChannelInfoBar(channelInfoBarContainer)
+        volumeBar = VolumeBar(volumeBarContainer)
 
         channelListPresenter = ChannelListPresenter(
             TvliveApp.db.channelDao(),
@@ -76,8 +79,12 @@ class LivePlayerActivity : AppCompatActivity() {
                     presenter.getCurrentChannel()?.channelNumber ?: 0,
                     presenter.getCurrentChannel()?.name ?: ""
                 )
+                OsdManager.OsdState.VOLUME -> {
+                    // VolumeBar 由 showVolumeBar 直接控制显示
+                }
                 OsdManager.OsdState.IDLE -> {
                     channelInfoBar.hide()
+                    volumeBar.hide()
                     if (::channelListOverlay.isInitialized && channelListOverlay.isVisible()) {
                         channelListOverlay.close()
                     }
@@ -346,7 +353,8 @@ class LivePlayerActivity : AppCompatActivity() {
     }
 
     fun showVolumeBar(percent: Int) {
-        showStatusMessage("音量 $percent%", 2000)
+        volumeBar.show(percent)
+        osdManager.show(OsdManager.OsdState.VOLUME, 2000)
     }
 
     fun showChannelNumberInput(number: String) {

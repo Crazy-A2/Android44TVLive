@@ -4,7 +4,7 @@ import android.os.Handler
 
 class OsdManager(private val handler: Handler) {
 
-    enum class OsdState { IDLE, CHANNEL_INFO, CHANNEL_LIST, SETTINGS, NUMBER_INPUT }
+    enum class OsdState { IDLE, CHANNEL_INFO, CHANNEL_LIST, SETTINGS, NUMBER_INPUT, VOLUME }
 
     var state: OsdState = OsdState.IDLE
         private set
