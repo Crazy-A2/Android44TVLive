@@ -16,6 +16,8 @@ import com.tvlive.app.data.db.entity.Source
 import com.tvlive.app.data.parser.M3uParser
 import com.tvlive.app.player.PlayerCallback
 import com.tvlive.app.player.PlayerManager
+import com.tvlive.app.ui.osd.ChannelNumberInput
+import com.tvlive.app.ui.presenter.LivePlayerPresenter
 import com.tvlive.app.util.PreferenceHelper
 
 class LivePlayerActivity : AppCompatActivity() {
@@ -30,8 +32,11 @@ class LivePlayerActivity : AppCompatActivity() {
     private lateinit var statusMessage: TextView
 
     private lateinit var playerManager: PlayerManager
+    private lateinit var presenter: LivePlayerPresenter
+    private lateinit var channelNumberInput: ChannelNumberInput
     private lateinit var prefs: PreferenceHelper
     private val handler = Handler()
+    private var hideStatusRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +52,10 @@ class LivePlayerActivity : AppCompatActivity() {
         statusMessage = findViewById(R.id.status_message)
 
         prefs = PreferenceHelper(this)
+        channelNumberInput = ChannelNumberInput(channelNumberInputContainer)
         initPlayer()
+        presenter = LivePlayerPresenter(this, playerManager, prefs)
+        presenter.init()
         loadAndPlay()
         hideSystemUI()
     }
@@ -69,12 +77,98 @@ class LivePlayerActivity : AppCompatActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        // 后续步骤中实现按键分发逻辑
+        when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                presenter.switchChannel(-1)
+                return true
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                presenter.switchChannel(1)
+                return true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                presenter.adjustVolume(-1)
+                return true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                presenter.adjustVolume(1)
+                return true
+            }
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+                presenter.adjustVolume(1)
+                return true
+            }
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                presenter.adjustVolume(-1)
+                return true
+            }
+            KeyEvent.KEYCODE_VOLUME_MUTE -> {
+                presenter.toggleMute()
+                return true
+            }
+            KeyEvent.KEYCODE_0 -> {
+                presenter.startNumberInput(0)
+                return true
+            }
+            KeyEvent.KEYCODE_1 -> {
+                presenter.startNumberInput(1)
+                return true
+            }
+            KeyEvent.KEYCODE_2 -> {
+                presenter.startNumberInput(2)
+                return true
+            }
+            KeyEvent.KEYCODE_3 -> {
+                presenter.startNumberInput(3)
+                return true
+            }
+            KeyEvent.KEYCODE_4 -> {
+                presenter.startNumberInput(4)
+                return true
+            }
+            KeyEvent.KEYCODE_5 -> {
+                presenter.startNumberInput(5)
+                return true
+            }
+            KeyEvent.KEYCODE_6 -> {
+                presenter.startNumberInput(6)
+                return true
+            }
+            KeyEvent.KEYCODE_7 -> {
+                presenter.startNumberInput(7)
+                return true
+            }
+            KeyEvent.KEYCODE_8 -> {
+                presenter.startNumberInput(8)
+                return true
+            }
+            KeyEvent.KEYCODE_9 -> {
+                presenter.startNumberInput(9)
+                return true
+            }
+            KeyEvent.KEYCODE_BACK -> {
+                if (channelNumberInputContainer.visibility == View.VISIBLE) {
+                    presenter.cancelNumberInput()
+                    return true
+                }
+            }
+        }
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+            // 长按 OK：收藏/取消收藏（步骤 5.1 实现）
+            return true
+        }
+        return super.onKeyLongPress(keyCode, event)
+    }
+
     override fun onBackPressed() {
-        // 覆盖层打开时关闭覆盖层，而非退出
+        if (channelNumberInputContainer.visibility == View.VISIBLE) {
+            presenter.cancelNumberInput()
+            return
+        }
         if (channelListOverlay.visibility == View.VISIBLE) {
             channelListOverlay.visibility = View.GONE
             return
@@ -83,6 +177,7 @@ class LivePlayerActivity : AppCompatActivity() {
             settingsOverlay.visibility = View.GONE
             return
         }
+        super.onBackPressed()
     }
 
     private fun initPlayer() {
@@ -127,6 +222,7 @@ class LivePlayerActivity : AppCompatActivity() {
             runOnUiThread {
                 if (source != null) {
                     playerManager.play(source.url)
+                    prefs.lastChannelId = channel.id
                 } else {
                     showStatusMessage("暂无可用源")
                 }
@@ -166,13 +262,37 @@ class LivePlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun showStatusMessage(text: String) {
+    fun showStatusMessage(text: String, autoHideMs: Long = 0) {
         statusMessage.text = text
         statusMessage.visibility = View.VISIBLE
+        hideStatusRunnable?.let { handler.removeCallbacks(it) }
+        hideStatusRunnable = null
+        if (autoHideMs > 0) {
+            val runnable = Runnable { hideStatusMessage() }
+            hideStatusRunnable = runnable
+            handler.postDelayed(runnable, autoHideMs)
+        }
     }
 
-    private fun hideStatusMessage() {
+    fun hideStatusMessage() {
         statusMessage.visibility = View.GONE
+        hideStatusRunnable = null
+    }
+
+    fun showChannelInfo(channel: Channel) {
+        showStatusMessage("${channel.channelNumber} ${channel.name}", 3000)
+    }
+
+    fun showVolumeBar(percent: Int) {
+        showStatusMessage("音量 $percent%", 2000)
+    }
+
+    fun showChannelNumberInput(number: String) {
+        channelNumberInput.show(number)
+    }
+
+    fun hideChannelNumberInput() {
+        channelNumberInput.hide()
     }
 
     private fun hideSystemUI() {
