@@ -1,0 +1,13 @@
+<resources>
+    <style name="Theme.TVLive" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">#E53935</item>
+        <item name="colorPrimaryDark">#C62828</item>
+        <item name="colorAccent">#FF7043</item>
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="Theme.TVLive.Fullscreen" parent="Theme.TVLive">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

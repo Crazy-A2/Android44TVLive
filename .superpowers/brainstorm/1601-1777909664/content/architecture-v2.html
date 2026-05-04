@@ -1,0 +1,101 @@
+<h2>整体架构设计（修订版）</h2>
+<p class="subtitle">基于开机即播 + 中老年友好的交互模型</p>
+
+<div class="section">
+  <h3>应用结构：全屏播放 + OSD 覆盖</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="background:#0d1117;padding:20px">
+      <!-- 架构图 -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <!-- 顶层：单个全屏Activity -->
+        <div style="border:2px solid #e53935;border-radius:8px;padding:16px;background:rgba(229,57,53,0.1)">
+          <div style="color:#e53935;font-weight:bold;margin-bottom:8px">LivePlayerActivity（唯一 Activity）</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="border:1px solid #43a047;border-radius:6px;padding:12px;background:rgba(67,160,71,0.1)">
+              <div style="color:#43a047;font-weight:bold;font-size:0.9rem">IJKPlayer 全屏播放</div>
+              <div style="font-size:0.8rem;opacity:0.7;margin-top:4px">SurfaceView 渲染</div>
+            </div>
+            <div style="border:1px solid #1e88e5;border-radius:6px;padding:12px;background:rgba(30,136,229,0.1)">
+              <div style="color:#1e88e5;font-weight:bold;font-size:0.9rem">OSD 覆盖层管理器</div>
+              <div style="font-size:0.8rem;opacity:0.7;margin-top:4px">频道信息 / 列表 / 设置</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中层：核心服务 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div style="border:1px solid #fb8c00;border-radius:6px;padding:12px;background:rgba(251,140,0,0.1)">
+            <div style="color:#fb8c00;font-weight:bold;font-size:0.9rem">SourceUpdateService</div>
+            <div style="font-size:0.75rem;opacity:0.7;margin-top:4px">启动检查 + 手动触发<br>抓取 → 解析 → 比对 → 入库</div>
+          </div>
+          <div style="border:1px solid #ab47bc;border-radius:6px;padding:12px;background:rgba(171,71,188,0.1)">
+            <div style="color:#ab47bc;font-weight:bold;font-size:0.9rem">SourceHealthChecker</div>
+            <div style="font-size:0.75rem;opacity:0.7;margin-top:4px">播放失败 → 标记失效<br>失效源 → 删除 → 拉取新源</div>
+          </div>
+          <div style="border:1px solid #00897b;border-radius:6px;padding:12px;background:rgba(0,137,123,0.1)">
+            <div style="color:#00897b;font-weight:bold;font-size:0.9rem">SourceRepository</div>
+            <div style="font-size:0.75rem;opacity:0.7;margin-top:4px">SQLite 数据层<br>频道 + 多源 + 健康 + 收藏</div>
+          </div>
+        </div>
+
+        <!-- 底层：数据 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="border:1px dashed #666;border-radius:6px;padding:12px;background:rgba(255,255,255,0.03)">
+            <div style="color:#999;font-weight:bold;font-size:0.85rem">SQLite (Room 1.x)</div>
+            <div style="font-size:0.75rem;opacity:0.5;margin-top:4px">channels / sources / favorites / history</div>
+          </div>
+          <div style="border:1px dashed #666;border-radius:6px;padding:12px;background:rgba(255,255,255,0.03)">
+            <div style="color:#999;font-weight:bold;font-size:0.85rem">SharedPreferences</div>
+            <div style="font-size:0.75rem;opacity:0.5;margin-top:4px">上次频道 / 音量 / 播放设置</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:1.5rem">
+  <h3>源健康检测与自动修复流程</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="background:#0d1117;padding:20px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:0.9rem">
+        <span style="background:#1e88e5;color:#fff;padding:6px 12px;border-radius:4px">播放失败</span>
+        <span style="color:#666">→</span>
+        <span style="background:#fb8c00;color:#fff;padding:6px 12px;border-radius:4px">切换备用源</span>
+        <span style="color:#666">→</span>
+        <span style="background:#ab47bc;color:#fff;padding:6px 12px;border-radius:4px">标记源失效</span>
+        <span style="color:#666">→</span>
+        <span style="background:#e53935;color:#fff;padding:6px 12px;border-radius:4px">删除失效源</span>
+        <span style="color:#666">→</span>
+        <span style="background:#43a047;color:#fff;padding:6px 12px;border-radius:4px">触发源更新</span>
+        <span style="color:#666">→</span>
+        <span style="background:#00897b;color:#fff;padding:6px 12px;border-radius:4px">新源入库</span>
+      </div>
+      <div style="margin-top:12px;font-size:0.8rem;opacity:0.6">
+        所有源都失效时：OSD 提示"频道暂无可用源，正在更新…"，后台立即拉取新源
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:1.5rem">
+  <h3>遥控器按键映射</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="background:#1a1a2e;padding:12px;border-radius:6px">
+      <table style="width:100%;font-size:0.9rem">
+        <tr><td style="color:#e53935;font-weight:bold;width:40%">⬆ / ⬇</td><td>上一个 / 下一个频道</td></tr>
+        <tr><td style="color:#43a047;font-weight:bold">⬅ / ➡</td><td>减小 / 增大音量</td></tr>
+        <tr><td style="color:#1e88e5;font-weight:bold">OK / 确认</td><td>打开频道列表覆盖层</td></tr>
+        <tr><td style="color:#fb8c00;font-weight:bold">菜单 / Menu</td><td>打开设置覆盖层</td></tr>
+      </table>
+    </div>
+    <div style="background:#1a1a2e;padding:12px;border-radius:6px">
+      <table style="width:100%;font-size:0.9rem">
+        <tr><td style="color:#ab47bc;font-weight:bold;width:40%">返回 / Back</td><td>关闭当前覆盖层</td></tr>
+        <tr><td style="color:#00897b;font-weight:bold">数字键</td><td>直接输入频道号换台</td></tr>
+        <tr><td style="color:#666;font-weight:bold">收藏</td><td>长按 OK 添加/取消收藏</td></tr>
+        <tr><td style="color:#666;font-weight:bold">静音</td><td>切换静音</td></tr>
+      </table>
+    </div>
+  </div>
+</div>

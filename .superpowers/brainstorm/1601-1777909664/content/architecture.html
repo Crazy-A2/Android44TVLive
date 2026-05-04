@@ -1,0 +1,42 @@
+<h2>架构方案对比</h2>
+<p class="subtitle">选择适合 Android 4.4.2 电视直播应用的整体架构</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>MVP + 单 Activity 多 Fragment</h3>
+      <p>参考文档推荐的方案。一个主 Activity 管理所有 Fragment（频道列表、播放、设置等），Presenter 处理逻辑。Leanback 库原生支持此模式。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>MVP + 多 Activity</h3>
+      <p>每个功能模块独立 Activity（频道页、播放页、设置页）。简单直接，4.4.2 兼容性最好，但页面间传值稍复杂。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>MVVM + 单 Activity</h3>
+      <p>用 ViewModel + LiveData 管理状态。更现代但需要 Architecture Components 旧版（1.x），4.4.2 兼容性需额外验证。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:2rem">
+  <h3>权衡分析</h3>
+  <div class="pros-cons">
+    <div class="pros"><h4>方案A优势</h4><ul><li>Leanback 库原生适配</li><li>页面切换流畅</li><li>社区示例多</li></ul></div>
+    <div class="cons"><h4>方案A劣势</h4><ul><li>Fragment 生命周期复杂</li><li>单 Activity 内存压力大（4.4.2 内存有限）</li></ul></div>
+  </div>
+  <div class="pros-cons">
+    <div class="pros"><h4>方案B优势</h4><ul><li>最简单可靠</li><li>内存友好（可释放不需要的页面）</li><li>4.4.2 零兼容问题</li></ul></div>
+    <div class="cons"><h4>方案B劣势</h4><ul><li>页面切换不够流畅</li><li>传值稍繁琐</li></ul></div>
+  </div>
+  <div class="pros-cons">
+    <div class="pros"><h4>方案C优势</h4><ul><li>状态管理更清晰</li><li>数据驱动 UI</li></ul></div>
+    <div class="cons"><h4>方案C劣势</h4><ul><li>4.4.2 兼容风险高</li><li>增加依赖复杂度</li><li>Leanback 适配需额外工作</li></ul></div>
+  </div>
+</div>
