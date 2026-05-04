@@ -186,10 +186,12 @@ class LivePlayerActivity : AppCompatActivity() {
         playerManager.setCallback(object : PlayerCallback {
             override fun onPrepared() {
                 hideStatusMessage()
+                presenter.onPlaybackPrepared()
             }
 
             override fun onError(what: Int, extra: Int) {
                 showStatusMessage("播放失败")
+                presenter.onPlaybackError()
             }
 
             override fun onInfo(what: Int, extra: Int) {

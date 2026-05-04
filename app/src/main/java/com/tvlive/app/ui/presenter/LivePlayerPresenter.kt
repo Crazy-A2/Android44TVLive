@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.os.Handler
 import com.tvlive.app.TvliveApp
 import com.tvlive.app.data.db.entity.Channel
+import com.tvlive.app.data.repository.SourceRepository
 import com.tvlive.app.player.PlayerManager
 import com.tvlive.app.ui.activity.LivePlayerActivity
 import com.tvlive.app.util.PreferenceHelper
@@ -16,11 +17,13 @@ class LivePlayerPresenter(
 ) {
 
     private val handler = Handler()
+    private val sourceRepository = SourceRepository(TvliveApp.db.sourceDao())
     private val audioManager: AudioManager =
         activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     private var channels: List<Channel> = emptyList()
     private var currentIndex: Int = -1
+    private var currentSourceId: Long = -1L
     private var isReady = false
 
     private val numberInputBuffer = StringBuilder()
@@ -52,9 +55,10 @@ class LivePlayerPresenter(
         currentIndex = channels.indexOfFirst { it.id == channel.id }
         prefs.lastChannelId = channel.id
         Thread {
-            val source = TvliveApp.db.sourceDao().getBestSource(channel.id)
+            val source = sourceRepository.getBestSource(channel.id)
             activity.runOnUiThread {
                 if (source != null) {
+                    currentSourceId = source.id
                     playerManager.play(source.url)
                     activity.showChannelInfo(channel)
                 } else {
@@ -106,6 +110,31 @@ class LivePlayerPresenter(
         numberInputRunnable?.let { handler.removeCallbacks(it) }
         numberInputBuffer.clear()
         activity.hideChannelNumberInput()
+    }
+
+    fun onPlaybackError() {
+        val channel = getCurrentChannel() ?: return
+        if (currentSourceId == -1L) return
+        Thread {
+            sourceRepository.reportSourceFailed(currentSourceId)
+            val next = sourceRepository.getNextAvailableSource(channel.id, currentSourceId)
+            activity.runOnUiThread {
+                if (next != null) {
+                    currentSourceId = next.id
+                    playerManager.play(next.url)
+                    activity.showStatusMessage("正在切换源...")
+                } else {
+                    activity.showStatusMessage("该频道暂无可用源")
+                }
+            }
+        }.start()
+    }
+
+    fun onPlaybackPrepared() {
+        if (currentSourceId != -1L) {
+            val responseTimeMs = 0 // 播放器未暴露精确的响应时间，暂不调整
+            sourceRepository.reportSourceSuccess(currentSourceId, responseTimeMs)
+        }
     }
 
     fun getCurrentChannel(): Channel? {

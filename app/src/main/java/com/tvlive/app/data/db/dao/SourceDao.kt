@@ -6,6 +6,9 @@ import com.tvlive.app.data.db.entity.Source
 @Dao
 interface SourceDao {
 
+    @Query("SELECT * FROM sources WHERE id = :id LIMIT 1")
+    fun getById(id: Long): Source?
+
     @Query("SELECT * FROM sources WHERE channel_id = :channelId AND status != 2 ORDER BY priority ASC LIMIT 1")
     fun getBestSource(channelId: Long): Source?
 
