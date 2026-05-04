@@ -1,7 +1,7 @@
 # 电视直播应用 — 进度追踪
 
 **项目**：Android 4.4.2 电视直播应用  
-**状态**：开发中  
+**状态**：全部完成 🎉
 
 ---
 
@@ -14,47 +14,41 @@
 
 ### ✅ 阶段 2：播放核心
 - 步骤 2.1 — 集成 IJKPlayer，实现 PlayerManager（含回调接口、解码模式、优化参数）
-- 步骤 2.2 — 实现内置源加载与启动播放（assets/builtin_sources.m3u、M3uParser、首次启动自动播放）
-- 步骤 2.3 — 实现遥控器换台与音量调节（LivePlayerPresenter、ChannelNumberInput、按键分发）
-- 步骤 2.4 — 实现源自动切换（SourceRepository、播放失败自动切换备用源、优先级动态调整）
+- 步骤 2.2 — 实现内置源加载与启动播放
+- 步骤 2.3 — 实现遥控器换台与音量调节
+- 步骤 2.4 — 实现源自动切换（播放失败自动切换备用源、优先级动态调整）
 
-### 测试
-- StreamTypeDetectorTest（JVM）：9 个用例
-- M3uParserTest（JVM）：10 个用例
-- SourceRepositoryTest（JVM）：14 个用例
-- ChannelDaoTest（Android）：15 个用例
+### ✅ 阶段 3：OSD 覆盖层
+- 步骤 3.1 — OsdManager + ChannelInfoBar
+- 步骤 3.2 — ChannelListOverlay（右侧频道列表，分类浏览、收藏）
+- 步骤 3.3 — VolumeBar + ChannelNumberInput（音量条、频道号输入）
+- 步骤 3.4 — SettingsOverlay（解码模式、源管理、关于）
 
----
+### ✅ 阶段 4：源管理
+- 步骤 4.1 — JsonSourceParser
+- 步骤 4.2 — SourceUpdateService（IntentService 远程获取与合并）
+- 步骤 4.3 — SourceHealthChecker（AlarmManager 定时 HEAD 探活、失效删除）
+- 步骤 4.4 — 联通源健康检测与自动修复完整流程（失败→更新→重试）
 
-## 进行中
+### ✅ 阶段 5：收藏、历史与收尾
+- 步骤 5.1 — 收藏功能（长按 OK 添加/取消收藏）
+- 步骤 5.2 — 观看历史（自动记录、最多 100 条）
+- 步骤 5.3 — 性能优化（RecyclerView 稳定 ID、禁用动画、PlayerManager 表面释放）
+- 步骤 5.4 — 真机集成修复（注册 SourceHealthChecker、接入 AlarmManager 调度）
 
-### 🔄 步骤 4.4：联通源健康检测与自动修复完整流程
-- 待开始
-
----
-
-## 待完成
-
-### 阶段 2 剩余
-- 步骤 2.4 — 源自动切换（SourceRepository、播放失败自动切换备用源）
-
-### 阶段 3：OSD 覆盖层
-- 步骤 3.1 — OsdManager + ChannelInfoBar **[已完成]**
-- 步骤 3.2 — ChannelListOverlay（右侧频道列表，分类浏览、收藏）**[已完成]**
-- 步骤 3.3 — VolumeBar + ChannelNumberInput（音量条、频道号输入）**[ChannelNumberInput 已完成]**
-- 步骤 3.4 — SettingsOverlay（解码模式、源管理、关于）**[已完成]**
-
-### 阶段 4：源管理
-- 步骤 4.1 — JsonSourceParser **[已完成]**
-- 步骤 4.2 — SourceUpdateService **[已完成]**
-- 步骤 4.3 — SourceHealthChecker（AlarmManager 定时检测、HEAD 探活、失效删除）**[已完成]**
-- 步骤 4.4 — 联通源健康检测与自动修复完整流程 **[已完成]**
-
-### 阶段 5：收藏、历史与收尾
-- 步骤 5.1 — 收藏功能（长按 OK 添加/取消收藏）**[已完成]**
-- 步骤 5.2 — 观看历史（自动记录、最多 100 条）**[已完成]**
-- 步骤 5.3 — 性能优化（RecyclerView 稳定 ID/禁用动画、PlayerManager 表面释放）**[已完成]**
-- 步骤 5.4 — 真机测试（注册 SourceHealthChecker、接入 AlarmManager 调度）**[已完成]**
+### 测试覆盖
+| 测试 | 类型 | 用例数 |
+|------|------|--------|
+| StreamTypeDetectorTest | JVM | 9 |
+| M3uParserTest | JVM | 10 |
+| SourceRepositoryTest | JVM | 14 |
+| OsdManagerTest | JVM | 11 |
+| ChannelListPresenterTest | JVM | 13 |
+| SettingsPresenterTest | JVM | 11 |
+| JsonSourceParserTest | JVM | 10 |
+| SourceUpdateRepositoryTest | JVM | 9 |
+| SourceHealthCheckerTest | JVM | 5 |
+| ChannelDaoTest | Android | 15 |
 
 ---
 
