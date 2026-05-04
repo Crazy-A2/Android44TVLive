@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.os.Handler
 import com.tvlive.app.TvliveApp
 import com.tvlive.app.data.db.entity.Channel
+import com.tvlive.app.data.db.entity.History
 import com.tvlive.app.data.repository.SourceRepository
 import com.tvlive.app.player.PlayerManager
 import com.tvlive.app.ui.activity.LivePlayerActivity
@@ -59,6 +60,8 @@ class LivePlayerPresenter(
         prefs.lastChannelId = channel.id
         Thread {
             val source = sourceRepository.getBestSource(channel.id)
+            TvliveApp.db.historyDao().insert(History(channelId = channel.id))
+            TvliveApp.db.historyDao().trimTo(100)
             activity.runOnUiThread {
                 if (source != null) {
                     currentSourceId = source.id
