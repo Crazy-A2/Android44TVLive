@@ -14,18 +14,18 @@ import com.tvlive.app.util.PreferenceHelper
 class LivePlayerPresenter(
     private val activity: LivePlayerActivity,
     private val playerManager: PlayerManager,
-    private val prefs: PreferenceHelper
+    private val prefs: PreferenceHelper,
+    private val sourceRepository: SourceRepository = SourceRepository(TvliveApp.db.sourceDao()),
+    private val handler: Handler = Handler()
 ) {
 
-    private val handler = Handler()
-    private val sourceRepository = SourceRepository(TvliveApp.db.sourceDao())
     private val audioManager: AudioManager =
         activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    private var channels: List<Channel> = emptyList()
-    private var currentIndex: Int = -1
-    private var currentSourceId: Long = -1L
-    private var isReady = false
+    internal var channels: List<Channel> = emptyList()
+    internal var currentIndex: Int = -1
+    internal var currentSourceId: Long = -1L
+    internal var isReady = false
     private var playStartTime: Long = 0L
 
     private val numberInputBuffer = StringBuilder()

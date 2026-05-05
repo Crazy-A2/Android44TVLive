@@ -42,7 +42,7 @@
 - 步骤 A3 — 响应时间统计（从 IJKPlayer 回调提取缓冲时间替代硬编码 0）✅
 
 ### ⬜ 阶段 B：健壮性与测试
-- 步骤 B1 — LivePlayerPresenter 单元测试
+- 步骤 B1 — LivePlayerPresenter 单元测试（23 个用例）✅
 - 步骤 B2 — 源配置预置
 - 步骤 B3 — 颜色/尺寸抽取
 
@@ -63,6 +63,7 @@
 | SourceUpdateRepositoryTest | JVM | 9 |
 | SourceHealthCheckerTest | JVM | 5 |
 | ChannelDaoTest | Android | 15 |
+| LivePlayerPresenterTest | JVM | 23 |
 
 ---
 
