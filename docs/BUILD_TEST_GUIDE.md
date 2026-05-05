@@ -33,9 +33,20 @@
 
 ### 2.1 构建/测试前环境变量（JDK 8 + Gradle 5.6.4）
 
+已预置在 `~/.bashrc`，新终端自动加载。手动 source 用：
+
+```bash
+source ~/.bashrc
+```
+
+配置内容：
+
 ```bash
 export JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-8.0.482.8-hotspot"
-export PATH="/c/Software/gradle/gradle-5.6.4/bin:$JAVA_HOME/bin:$PATH"
+export ANDROID_HOME="/c/Users/qwe45/AppData/Local/Android/Sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+export GRADLE_HOME="/c/Software/gradle/gradle-5.6.4"
+export PATH="$GRADLE_HOME/bin:$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$PATH"
 ```
 
 ### 2.2 SDK 管理命令前环境变量（JDK 17+）
@@ -134,7 +145,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 ## 5. 后续会话执行顺序（推荐）
 
-1. 执行 2.1 环境变量，确认 `gradle -v` 显示 Gradle 5.6.4 + JVM 1.8
+1. （新终端已自动加载 `~/.bashrc`，否则 `source ~/.bashrc`）确认 `gradle -v` 显示 Gradle 5.6.4 + JVM 1.8
 2. `gradle tasks` 确认可构建
 3. `gradle testDebugUnitTest` 验证 107 测试通过
 4. `gradle assembleDebug` 构建 APK

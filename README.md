@@ -31,17 +31,19 @@ Android 4.4.2+ 电视直播应用，面向遥控器操作，开机即播。
 
 - **JDK 8**（AGP 3.6.4 不支持 JDK 9+）
 - **Android SDK**：API 28（compileSdk） + Build-Tools 28.0.3
-- **Gradle**：5.6.4（项目未包含 `gradlew`，需本地安装或生成 wrapper）
+- **Gradle**：5.6.4
+
+环境变量已预置在 `~/.bashrc`，新终端自动加载。手动加载：`source ~/.bashrc`
 
 ```bash
-# 生成 Gradle Wrapper（首次使用）
-gradle wrapper --gradle-version 5.6.4
-
 # Debug APK
-./gradlew assembleDebug
+gradle assembleDebug
 
 # Release APK（ProGuard 混淆，规则见 app/proguard-rules.pro）
-./gradlew assembleRelease
+gradle assembleRelease
+
+# 或使用 wrapper
+./gradlew assembleDebug
 ```
 
 | 构建类型 | 输出路径 | 说明 |
@@ -61,7 +63,7 @@ gradle wrapper --gradle-version 5.6.4
 
 ## 测试
 
-共 **101 个测试用例**，10 个测试类（9 个 JVM 单元测试 + 1 个 Android 仪器测试）。
+共 **107 个测试用例**，11 个测试类（10 个 JVM 单元测试 + 1 个 Android 仪器测试）。
 
 ### JVM 单元测试
 
