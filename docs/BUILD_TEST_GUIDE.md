@@ -74,7 +74,7 @@ gradle testDebugUnitTest
 
 ## 3. 当前状态
 
-**`gradle testDebugUnitTest` 已通过** — 84 tests completed, BUILD SUCCESSFUL ✅
+**`gradle testDebugUnitTest` 已通过** — 107 tests completed, BUILD SUCCESSFUL ✅（2026-05-05 验证）
 
 ## 4. 已解决问题记录
 
@@ -136,10 +136,35 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 1. 执行 2.1 环境变量，确认 `gradle -v` 显示 Gradle 5.6.4 + JVM 1.8
 2. `gradle tasks` 确认可构建
-3. `gradle testDebugUnitTest` 验证 84 测试通过
+3. `gradle testDebugUnitTest` 验证 107 测试通过
 4. `gradle assembleDebug` 构建 APK
 
-## 6. 备注
+## 6. 2026-05-05 新增（第二轮开发）
+
+### 6.1 新增功能
+- **频道 Logo 显示**：ChannelListAdapter + ChannelInfoBar 用 Glide 加载 logoUrl（圆形裁剪）
+- **EPG 文本**：ChannelInfoBar 新增 `channel_epg` TextView
+- **响应时间统计**：LivePlayerPresenter 记录播放启动时间节点，onPlaybackPrepared 时计算耗时替代硬编码 0
+- **默认源预置**：`assets/default_source_configs.json`，首次启动自动导入
+
+### 6.2 新增测试
+- 新增 `LivePlayerPresenterTest`（23 用例）
+- 测试总数：84 → **107**
+
+### 6.3 可测化重构
+- LivePlayerPresenter 新构造参数 `sourceRepository`、`handler`（均带默认值，向后兼容）
+- `channels`、`currentIndex`、`isReady`、`currentSourceId` 改为 `internal`
+
+### 6.4 资源抽取
+- 新增 `colors.xml`（19 色值）、`dimens.xml`（15 维度），4 个布局 XML 已引用
+
+### 6.5 CI
+- `.github/workflows/ci.yml`：JDK 8 + Android SDK 28
+
+### 6.6 清理
+- 删除 `ijkplayer-exo/` 模块
+
+## 7. 备注
 
 - 本项目是老电视兼容路线，核心版本基线：`minSdk 19`、`compileSdk/targetSdk 28`。
 - 不要将本项目升级到新版本 Android SDK 基线（如 API 35）作为默认方案。
