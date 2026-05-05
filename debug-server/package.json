@@ -1,0 +1,12 @@
+{
+  "name": "debug-server",
+  "version": "1.0.0",
+  "description": "TV Live App 远程调试服务",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
