@@ -57,6 +57,7 @@ dependencies {
     // IJKPlayer (本地模块，jcenter 已下线)
     implementation project(':ijkplayer-java')
     implementation project(':ijkplayer-armv7a')
+    implementation project(':ijkplayer-x86')
 
     // JVM 单元测试
     testImplementation 'junit:junit:4.13.2'

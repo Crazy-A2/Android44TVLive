@@ -82,4 +82,12 @@
 | Room | 1.1.1 |
 | OkHttp | 3.12.13 |
 | Glide | 4.11.0 |
-| IJKPlayer | 0.8.8 (armv7a) |
+| IJKPlayer | 0.8.8 (armv7a, x86) |
+
+## 2026-05-05 修复：IJKPlayer 原生库缺失
+
+- **问题**：`ijkplayer-master.zip` 只含源码不含预编译 .so，`UnsatisfiedLinkError: couldn't find "libijkffmpeg.so"`
+- **解决**：从 `leavesCZY/ijkplayer-so-extend` (GitHub) 获取 x86 + armv7a 预编译 .so
+- **新增**：`ijkplayer-x86/` 模块（x86 模拟器支持）
+- **补全**：`ijkplayer-armv7a/src/main/libs/armeabi-v7a/` 下 3 个 so 文件
+- **注册**：`settings.gradle` + `app/build.gradle` 添加 x86 模块依赖
