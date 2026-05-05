@@ -131,6 +131,7 @@ class LivePlayerActivity : AppCompatActivity() {
             osdManager = osdManager
         )
 
+        initPlayer()
         presenter = LivePlayerPresenter(this, playerManager, prefs)
         presenter.init()
         presenter.onNoSourcesAvailable = {
