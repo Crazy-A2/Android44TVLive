@@ -1,2 +1,4 @@
 include ':app'
+include ':ijkplayer-java'
+include ':ijkplayer-armv7a'
 rootProject.name='TVLive'
