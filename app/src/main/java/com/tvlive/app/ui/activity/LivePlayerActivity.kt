@@ -18,6 +18,7 @@ import com.tvlive.app.R
 import com.tvlive.app.TvliveApp
 import com.tvlive.app.data.db.entity.Channel
 import com.tvlive.app.data.db.entity.Source
+import com.tvlive.app.data.db.entity.SourceConfig
 import com.tvlive.app.data.parser.M3uParser
 import com.tvlive.app.player.PlayerCallback
 import com.tvlive.app.player.PlayerManager
@@ -384,6 +385,31 @@ class LivePlayerActivity : AppCompatActivity() {
                     db.sourceDao().insertAll(sources)
                 }
             }
+            // 首次启动同时预置默认源配置
+            if (TvliveApp.db.sourceConfigDao().getAll().isEmpty()) {
+                loadDefaultSourceConfigs()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun loadDefaultSourceConfigs() {
+        try {
+            val json = assets.open("default_source_configs.json").bufferedReader().use { it.readText() }
+            val arr = org.json.JSONArray(json)
+            val configs = mutableListOf<SourceConfig>()
+            for (i in 0 until arr.length()) {
+                val obj = arr.getJSONObject(i)
+                configs.add(SourceConfig(
+                    name = obj.optString("name", ""),
+                    url = obj.optString("url", ""),
+                    format = obj.optString("format", "m3u"),
+                    isBuiltin = true,
+                    isEnabled = obj.optBoolean("is_enabled", false)
+                ))
+            }
+            configs.forEach { TvliveApp.db.sourceConfigDao().insert(it) }
         } catch (e: Exception) {
             e.printStackTrace()
         }

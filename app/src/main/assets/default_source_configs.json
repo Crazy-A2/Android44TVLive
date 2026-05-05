@@ -1,0 +1,8 @@
+[
+  {
+    "name": "示例源",
+    "url": "https://example.com/channels.m3u",
+    "format": "m3u",
+    "is_enabled": false
+  }
+]
