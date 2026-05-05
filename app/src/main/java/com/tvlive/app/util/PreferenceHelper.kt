@@ -23,4 +23,12 @@ class PreferenceHelper(context: Context) {
     var isFirstLaunch: Boolean
         get() = prefs.getBoolean("first_launch", true)
         set(value) = prefs.edit().putBoolean("first_launch", value).apply()
+
+    var categoryPriority: String
+        get() = prefs.getString("category_priority", "央视,卫视,付费") ?: "央视,卫视,付费"
+        set(value) = prefs.edit().putString("category_priority", value).apply()
+
+    var channelsOrdered: Boolean
+        get() = prefs.getBoolean("channels_ordered", false)
+        set(value) = prefs.edit().putBoolean("channels_ordered", value).apply()
 }

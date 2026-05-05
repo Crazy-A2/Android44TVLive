@@ -17,9 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.tvlive.app.R
 import com.tvlive.app.TvliveApp
 import com.tvlive.app.data.db.entity.Channel
-import com.tvlive.app.data.db.entity.Source
 import com.tvlive.app.data.db.entity.SourceConfig
-import com.tvlive.app.data.parser.M3uParser
 import com.tvlive.app.player.PlayerCallback
 import com.tvlive.app.player.PlayerManager
 import com.tvlive.app.ui.osd.ChannelInfoBar
@@ -361,56 +359,32 @@ class LivePlayerActivity : AppCompatActivity() {
 
     private fun loadBuiltinSources() {
         try {
-            assets.open("builtin_sources.m3u").use { stream ->
-                val result = M3uParser.parse(stream)
-                val db = TvliveApp.db
-                var channelNumber = 1
-                for (pc in result.channels) {
-                    val channel = Channel(
-                        channelNumber = channelNumber++,
-                        name = pc.name,
-                        category = pc.category,
-                        logoUrl = pc.logoUrl,
-                        epgId = pc.epgId
-                    )
-                    val cid = db.channelDao().insert(channel)
-                    val sources = pc.sources.map { ps ->
-                        Source(
-                            channelId = cid,
-                            url = ps.url,
-                            streamType = ps.streamType,
-                            quality = ps.quality,
-                            provider = ps.provider
-                        )
-                    }
-                    db.sourceDao().insertAll(sources)
-                }
-            }
-            // 首次启动同时预置默认源配置
-            if (TvliveApp.db.sourceConfigDao().getAll().isEmpty()) {
-                loadDefaultSourceConfigs()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+            val json = assets.open("builtin_source_feeds.json").bufferedReader().use { it.readText() }
+            val root = org.json.JSONObject(json)
 
-    private fun loadDefaultSourceConfigs() {
-        try {
-            val json = assets.open("default_source_configs.json").bufferedReader().use { it.readText() }
-            val arr = org.json.JSONArray(json)
-            val configs = mutableListOf<SourceConfig>()
-            for (i in 0 until arr.length()) {
-                val obj = arr.getJSONObject(i)
-                configs.add(SourceConfig(
-                    name = obj.optString("name", ""),
-                    url = obj.optString("url", ""),
-                    format = obj.optString("format", "m3u"),
+            val categoryPriorityArr = root.optJSONArray("category_priority")
+            if (categoryPriorityArr != null) {
+                val cats = mutableListOf<String>()
+                for (i in 0 until categoryPriorityArr.length()) cats.add(categoryPriorityArr.getString(i))
+                prefs.categoryPriority = cats.joinToString(",")
+            }
+
+            val feeds = root.getJSONArray("feeds")
+            for (i in 0 until feeds.length()) {
+                val f = feeds.getJSONObject(i)
+                TvliveApp.db.sourceConfigDao().insert(SourceConfig(
+                    name = f.getString("name"),
+                    url = f.getString("url"),
+                    format = f.optString("format", "m3u"),
                     isBuiltin = true,
-                    isEnabled = obj.optBoolean("is_enabled", false)
+                    isEnabled = f.optBoolean("enabled", true),
+                    sourcePriority = f.optInt("source_priority", 100)
                 ))
             }
-            configs.forEach { TvliveApp.db.sourceConfigDao().insert(it) }
+
+            val intent = Intent(this, SourceUpdateService::class.java)
+            intent.action = SourceUpdateService.ACTION_UPDATE_ALL
+            startService(intent)
         } catch (e: Exception) {
             e.printStackTrace()
         }

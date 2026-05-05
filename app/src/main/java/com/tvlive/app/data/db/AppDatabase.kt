@@ -15,7 +15,7 @@ import com.tvlive.app.data.db.entity.*
         History::class,
         SourceConfig::class
     ],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
 

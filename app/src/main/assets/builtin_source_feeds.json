@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "category_priority": ["央视", "卫视", "付费"],
+  "feeds": [
+    {
+      "name": "最佳综合源(已按延迟排序)",
+      "url": "https://raw.githubusercontent.com/zilong7728/Collect-IPTV/main/best_sorted.m3u",
+      "format": "m3u",
+      "source_priority": 10,
+      "enabled": true
+    },
+    {
+      "name": "CCTV频道",
+      "url": "https://raw.githubusercontent.com/best-fan/iptv-sources/main/cn_cctv.m3u8",
+      "format": "m3u",
+      "source_priority": 20,
+      "enabled": true
+    },
+    {
+      "name": "卫视频道",
+      "url": "https://raw.githubusercontent.com/best-fan/iptv-sources/main/cn_province.m3u8",
+      "format": "m3u",
+      "source_priority": 20,
+      "enabled": true
+    },
+    {
+      "name": "付费频道",
+      "url": "https://raw.githubusercontent.com/best-fan/iptv-sources/main/cn_pay.m3u8",
+      "format": "m3u",
+      "source_priority": 20,
+      "enabled": true
+    }
+  ]
+}

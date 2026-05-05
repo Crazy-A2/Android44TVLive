@@ -152,10 +152,17 @@ class LivePlayerPresenter(
     }
 
     fun onSourcesUpdated() {
-        val channel = getCurrentChannel()
-        if (channel != null) {
-            playChannel(channel)
-        }
+        Thread {
+            channels = TvliveApp.db.channelDao().getAllOrdered()
+            currentIndex = channels.indexOfFirst { it.id == prefs.lastChannelId }
+            if (currentIndex == -1 && channels.isNotEmpty()) currentIndex = 0
+            isReady = true
+            val channel = getCurrentChannel()
+            activity.runOnUiThread {
+                if (channel != null) playChannel(channel)
+                else activity.showStatusMessage("暂无可用频道")
+            }
+        }.start()
     }
 
     fun cancelRetry() {

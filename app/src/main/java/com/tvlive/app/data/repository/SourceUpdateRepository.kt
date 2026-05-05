@@ -26,7 +26,7 @@ class SourceUpdateRepository(
         }
     }
 
-    fun mergeToDatabase(parsed: ParseResult, configId: Long?): MergeResult {
+    fun mergeToDatabase(parsed: ParseResult, configId: Long?, sourcePriority: Int = 100): MergeResult {
         val now = System.currentTimeMillis()
         var inserted = 0
         var updated = 0
@@ -72,6 +72,7 @@ class SourceUpdateRepository(
                         streamType = ps.streamType,
                         quality = ps.quality,
                         provider = ps.provider,
+                        priority = sourcePriority,
                         sourceConfigId = configId
                     ))
                 } else {
@@ -102,6 +103,28 @@ class SourceUpdateRepository(
         // 更新配置的更新时间和 etag（由调用方处理）
 
         return MergeResult(inserted, updated, removed)
+    }
+
+    fun reorderChannelsByCategory(categoryPriority: List<String>) {
+        val allChannels = channelDao.getAllIncludingHidden()
+        if (allChannels.isEmpty()) return
+
+        val orderMap = mutableMapOf<String, Int>()
+        categoryPriority.forEachIndexed { i, cat -> orderMap[cat] = i }
+
+        val sorted = allChannels.sortedWith(
+            compareBy<Channel> { orderMap[it.category] ?: Int.MAX_VALUE }
+                .thenBy { it.name }
+        )
+
+        var num = 1
+        for (ch in sorted) {
+            ch.channelNumber = num
+            ch.sortOrder = num
+            ch.updatedAt = System.currentTimeMillis()
+            channelDao.update(ch)
+            num++
+        }
     }
 
     data class MergeResult(val inserted: Int, val updated: Int, val removed: Int)

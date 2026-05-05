@@ -15,5 +15,6 @@ data class SourceConfig(
     @ColumnInfo(name = "last_update_time") var lastUpdateTime: Long? = null,
     @ColumnInfo(name = "update_interval_ms") var updateIntervalMs: Long = 21600000L,
     @ColumnInfo(name = "etag") var etag: String? = null,
+    @ColumnInfo(name = "source_priority") var sourcePriority: Int = 100,
     @ColumnInfo(name = "created_at") var createdAt: Long = System.currentTimeMillis()
 )

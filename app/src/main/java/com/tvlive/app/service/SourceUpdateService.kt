@@ -7,6 +7,7 @@ import com.tvlive.app.TvliveApp
 import com.tvlive.app.data.db.entity.SourceConfig
 import com.tvlive.app.data.net.SourceFetcher
 import com.tvlive.app.data.repository.SourceUpdateRepository
+import com.tvlive.app.util.PreferenceHelper
 
 class SourceUpdateService : IntentService("SourceUpdateService") {
 
@@ -14,6 +15,8 @@ class SourceUpdateService : IntentService("SourceUpdateService") {
         val db = TvliveApp.db
         SourceUpdateRepository(db.channelDao(), db.sourceDao(), db.sourceConfigDao())
     }
+
+    private val prefs by lazy { PreferenceHelper(this) }
 
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
@@ -38,6 +41,14 @@ class SourceUpdateService : IntentService("SourceUpdateService") {
         for (config in configs) {
             updateSingleConfig(config)
         }
+        if (!prefs.channelsOrdered) {
+            repo.reorderChannelsByCategory(
+                prefs.categoryPriority.split(",").map { it.trim() }
+            )
+            if (TvliveApp.db.channelDao().count() > 0) {
+                prefs.channelsOrdered = true
+            }
+        }
         broadcastUpdateComplete(null)
     }
 
@@ -48,16 +59,19 @@ class SourceUpdateService : IntentService("SourceUpdateService") {
     }
 
     private fun updateSingleConfig(config: SourceConfig) {
-        val result = SourceFetcher.fetch(config.url, config.etag)
-        if (!result.isModified || result.content == null) return
+        try {
+            val result = SourceFetcher.fetch(config.url, config.etag)
+            if (!result.isModified || result.content == null) return
 
-        val parsed = repo.parseContent(result.content, config.format) ?: return
-        val merge = repo.mergeToDatabase(parsed, config.id)
+            val parsed = repo.parseContent(result.content, config.format) ?: return
+            repo.mergeToDatabase(parsed, config.id, config.sourcePriority)
 
-        // 更新配置 ETag 和时间
-        config.etag = result.etag
-        config.lastUpdateTime = System.currentTimeMillis()
-        TvliveApp.db.sourceConfigDao().update(config)
+            config.etag = result.etag
+            config.lastUpdateTime = System.currentTimeMillis()
+            TvliveApp.db.sourceConfigDao().update(config)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun updateSingleChannel(channelId: Long) {
