@@ -39,7 +39,7 @@
 ### ▶️ 阶段 A：功能补全（本轮）
 - 步骤 A1 — 频道 Logo 显示（ChannelListAdapter + ChannelInfoBar 用 Glide 加载 logoUrl）
 - 步骤 A2 — EPG 信息显示（ChannelInfoBar 增加 EPG 节目文本）
-- 步骤 A3 — 响应时间统计（从 IJKPlayer 回调提取缓冲时间替代硬编码 0）
+- 步骤 A3 — 响应时间统计（从 IJKPlayer 回调提取缓冲时间替代硬编码 0）✅
 
 ### ⬜ 阶段 B：健壮性与测试
 - 步骤 B1 — LivePlayerPresenter 单元测试

@@ -26,6 +26,7 @@ class LivePlayerPresenter(
     private var currentIndex: Int = -1
     private var currentSourceId: Long = -1L
     private var isReady = false
+    private var playStartTime: Long = 0L
 
     private val numberInputBuffer = StringBuilder()
     private var numberInputRunnable: Runnable? = null
@@ -65,6 +66,7 @@ class LivePlayerPresenter(
             activity.runOnUiThread {
                 if (source != null) {
                     currentSourceId = source.id
+                    playStartTime = System.currentTimeMillis()
                     playerManager.play(source.url)
                     activity.showChannelInfo()
                 } else {
@@ -127,6 +129,7 @@ class LivePlayerPresenter(
             activity.runOnUiThread {
                 if (next != null) {
                     currentSourceId = next.id
+                    playStartTime = System.currentTimeMillis()
                     playerManager.play(next.url)
                     activity.showStatusMessage("正在切换源...")
                 } else {
@@ -162,7 +165,11 @@ class LivePlayerPresenter(
 
     fun onPlaybackPrepared() {
         if (currentSourceId != -1L) {
-            val responseTimeMs = 0 // 播放器未暴露精确的响应时间，暂不调整
+            val responseTimeMs = if (playStartTime > 0L) {
+                (System.currentTimeMillis() - playStartTime).toInt()
+            } else {
+                0
+            }
             sourceRepository.reportSourceSuccess(currentSourceId, responseTimeMs)
         }
     }
