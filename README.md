@@ -137,6 +137,7 @@ app/src/main/java/com/tvlive/app/
 |------|------|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | MVP 架构、模块职责、关键约束 |
 | [docs/PROGRESS.md](docs/PROGRESS.md) | 项目开发进度追踪 |
+| [docs/BUILD_TEST_GUIDE.md](docs/BUILD_TEST_GUIDE.md) | 构建与测试操作指南（SDK/JDK/Gradle 固定命令与已知阻塞） |
 | [docs/superpowers/specs/2026-05-05-tv-live-design.md](docs/superpowers/specs/2026-05-05-tv-live-design.md) | 产品设计文档：交互模型、按键映射、技术方案 |
 
 ## License
