@@ -49,6 +49,9 @@
 ### ⬜ 阶段 C：质量与运维
 - 步骤 C1 — 清理 ijkplayer-exo 目录 ✅
 - 步骤 C2 — CI 配置（GitHub Actions）✅
+- 步骤 C3 — LivePlayerActivity playerManager 未初始化崩溃修复 ✅
+
+### 测试覆盖
 
 ### 测试覆盖
 | 测试 | 类型 | 用例数 |

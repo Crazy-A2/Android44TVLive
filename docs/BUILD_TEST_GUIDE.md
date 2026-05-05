@@ -164,7 +164,81 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 ### 6.6 清理
 - 删除 `ijkplayer-exo/` 模块
 
-## 7. 备注
+## 7. Bugreport 日志分析（快速参考）
+
+本节供后续会话拿到模拟器 bugreport 时快速定位问题用。
+
+### 7.1 关键文件
+
+| 文件 | 内容 | 用途 |
+|------|------|------|
+| `bugreport/bugreport-*.txt` | 主报告（dumpsys + kernel log + logcat） | **核心分析入口** |
+| `bugreport/dumpstate_log.txt` | dumpstate 过程记录 | 确认 logcat 是否抓取成功 |
+| `avd_details.txt` | AVD 配置（API 级别、CPU、内存） | 确认环境参数 |
+
+### 7.2 快速分析命令（Git Bash）
+
+```bash
+DIR="bugreport 目录路径"
+
+# 1. 确认 logcat 是否成功
+grep -i "logcat.*fail\|logcat.*error" "$DIR/bugreport/dumpstate_log.txt"
+
+# 2. 查 FATAL / ANR / tombstone（全文件）
+grep -n -i "FATAL\|ANR\|tombstone" "$DIR/bugreport/bugreport-*.txt" | head -30
+
+# 3. 查 com.tvlive.app 所有异常（本项目包名）
+grep -n "com.tvlive.app" "$DIR/bugreport/bugreport-*.txt" | grep -i "crash\|fatal\|error\|exception" | head -20
+
+# 4. 查 Activity 生命周期事件（am_* 协议缓冲区行）
+grep -n "am_crash\|am_create_activity\|am_finish_activity" "$DIR/bugreport/bugreport-*.txt"
+
+# 5. 查进程死亡
+grep -n "process.*died\|FATAL EXCEPTION" "$DIR/bugreport/bugreport-*.txt" | head -20
+
+# 6. 查内存状态
+grep -n "MemTotal\|MemFree\|MemAvailable" "$DIR/bugreport/bugreport-*.txt"
+```
+
+### 7.3 阅读理解顺序
+
+1. `dumpstate_log.txt` 第 27 行 → 确认 `logcat read failure` 有无
+2. 搜索 `FATAL EXCEPTION` → 定位崩溃进程、异常类型、堆栈
+3. 搜索 `am_crash` → 确认崩溃的 Activity 和异常消息（protocol buffer 格式，更简洁）
+4. 搜索 `ANR` → 确认是否有无响应
+5. 查看 `MemTotal` / `MemFree` → 排除 OOM
+6. 找到崩溃栈顶 `at com.tvlive.app.xxx(Xxx.kt:行号)` → **直接读源码对应行**
+
+### 7.4 本次实战案例
+
+**Bug**：`com.tvlive.app` 进程反复崩溃，每次启动即死。
+
+**从 bugreport 定位到的根因**（am_crash 行）：
+```
+am_crash: [4192,0,com.tvlive.app,...,kotlin.UninitializedPropertyAccessException,
+            lateinit property playerManager has not been initialized,LivePlayerActivity.kt,134]
+```
+
+**对应源码**：[LivePlayerActivity.kt:134](app/src/main/java/com/tvlive/app/ui/activity/LivePlayerActivity.kt#L134)
+```kotlin
+presenter = LivePlayerPresenter(this, playerManager, prefs)  // playerManager 未初始化
+```
+
+`initPlayer()`（第 309 行）定义了 `playerManager = PlayerManager()` 但 `onCreate` 中从未调用。
+
+**修复**：第 134 行前插入 `initPlayer()`，确保 `playerManager` 在使用前已初始化。
+
+### 7.5 常见异常速查
+
+| 异常类型 | 含义 | 典型原因 |
+|---------|------|---------|
+| `kotlin.UninitializedPropertyAccessException` | lateinit 属性未初始化 | 忘记调用初始化方法 |
+| `NullPointerException` | 空指针 | 同上，或异步回调时 View 已销毁 |
+| `IllegalStateException` | 非法状态 | SurfaceView 在 Surface 创建前使用 |
+| `android.database.sqlite.SQLiteCantOpenDatabaseException` | 数据库打不开 | Room 初始化失败或路径问题 |
+| `WindowManager$BadTokenException` | 无效 Window Token | Activity 已销毁但仍尝试显示 Dialog |
+
+## 8. 备注
 
 - 本项目是老电视兼容路线，核心版本基线：`minSdk 19`、`compileSdk/targetSdk 28`。
 - 不要将本项目升级到新版本 Android SDK 基线（如 API 35）作为默认方案。
