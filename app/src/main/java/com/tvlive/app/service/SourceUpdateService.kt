@@ -70,7 +70,7 @@ class SourceUpdateService : IntentService("SourceUpdateService") {
             config.lastUpdateTime = System.currentTimeMillis()
             TvliveApp.db.sourceConfigDao().update(config)
         } catch (e: Exception) {
-            e.printStackTrace()
+            com.tvlive.app.debug.DebugClient.logError("SourceUpdateService", e)
         }
     }
 

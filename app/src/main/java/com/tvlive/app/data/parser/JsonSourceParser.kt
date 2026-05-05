@@ -50,11 +50,11 @@ object JsonSourceParser {
                     ))
                 } catch (e: Exception) {
                     // 单频道解析失败跳过
-                    e.printStackTrace()
+                    com.tvlive.app.debug.DebugClient.logError("JsonSourceParser", e)
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            com.tvlive.app.debug.DebugClient.logError("JsonSourceParser", e)
         }
 
         return ParseResult(

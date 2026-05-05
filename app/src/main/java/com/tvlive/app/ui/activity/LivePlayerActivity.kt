@@ -31,6 +31,7 @@ import com.tvlive.app.ui.presenter.ChannelListPresenter
 import com.tvlive.app.ui.presenter.SettingsPresenter
 import com.tvlive.app.ui.presenter.LivePlayerPresenter
 import com.tvlive.app.util.PreferenceHelper
+import com.tvlive.app.debug.DebugClient
 
 class LivePlayerActivity : AppCompatActivity() {
 
@@ -153,6 +154,7 @@ class LivePlayerActivity : AppCompatActivity() {
 
         loadAndPlay()
         hideSystemUI()
+        DebugClient.start(this)
     }
 
     override fun onResume() {
@@ -167,6 +169,7 @@ class LivePlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        DebugClient.stop()
         playerManager.release()
         handler.removeCallbacksAndMessages(null)
         updateReceiver?.let {
@@ -386,7 +389,7 @@ class LivePlayerActivity : AppCompatActivity() {
             intent.action = SourceUpdateService.ACTION_UPDATE_ALL
             startService(intent)
         } catch (e: Exception) {
-            e.printStackTrace()
+            DebugClient.logError("LivePlayerActivity", e)
         }
     }
 
@@ -423,6 +426,17 @@ class LivePlayerActivity : AppCompatActivity() {
     fun hideChannelNumberInput() {
         channelNumberInput.hide()
     }
+
+    internal fun debugSwitchChannel(channelNumber: Int) {
+        presenter.startNumberInput(channelNumber)
+    }
+
+    internal fun debugSetDecoderMode(mode: com.tvlive.app.player.DecoderMode) {
+        playerManager.setDecoderMode(mode)
+    }
+
+    internal fun debugGetCurrentChannelName(): String = presenter.getCurrentChannel()?.name ?: ""
+    internal fun debugIsPlaying(): Boolean = playerManager.isPlaying()
 
     private fun hideSystemUI() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
