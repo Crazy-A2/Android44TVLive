@@ -66,7 +66,7 @@ class LivePlayerPresenter(
                 if (source != null) {
                     currentSourceId = source.id
                     playerManager.play(source.url)
-                    activity.showChannelInfo(channel)
+                    activity.showChannelInfo()
                 } else {
                     activity.showStatusMessage("暂无可用源")
                 }

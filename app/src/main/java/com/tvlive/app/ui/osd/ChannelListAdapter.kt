@@ -3,9 +3,11 @@ package com.tvlive.app.ui.osd
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.tvlive.app.R
 import com.tvlive.app.data.db.entity.Channel
 
@@ -23,6 +25,7 @@ class ChannelListAdapter(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val logoImage: ImageView = itemView.findViewById(R.id.item_channel_logo)
         val numberText: TextView = itemView.findViewById(R.id.item_channel_number)
         val nameText: TextView = itemView.findViewById(R.id.item_channel_name)
         val favText: TextView = itemView.findViewById(R.id.item_fav_indicator)
@@ -40,6 +43,16 @@ class ChannelListAdapter(
         holder.numberText.text = channel.channelNumber.toString()
         holder.nameText.text = channel.name
         holder.favText.visibility = if (channel.id in favoriteIds) View.VISIBLE else View.GONE
+
+        if (!channel.logoUrl.isNullOrEmpty()) {
+            holder.logoImage.visibility = View.VISIBLE
+            Glide.with(holder.logoImage.context)
+                .load(channel.logoUrl)
+                .circleCrop()
+                .into(holder.logoImage)
+        } else {
+            holder.logoImage.visibility = View.GONE
+        }
 
         val isSelected = position == selectedPosition || channel.id == currentChannelId
         holder.root.setBackgroundColor(

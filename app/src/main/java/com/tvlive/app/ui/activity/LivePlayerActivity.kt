@@ -86,10 +86,12 @@ class LivePlayerActivity : AppCompatActivity() {
         osdManager = OsdManager(handler)
         osdManager.onStateChanged = { state ->
             when (state) {
-                OsdManager.OsdState.CHANNEL_INFO -> channelInfoBar.show(
-                    presenter.getCurrentChannel()?.channelNumber ?: 0,
-                    presenter.getCurrentChannel()?.name ?: ""
-                )
+                OsdManager.OsdState.CHANNEL_INFO -> {
+                    val ch = presenter.getCurrentChannel()
+                    if (ch != null) {
+                        channelInfoBar.show(ch.channelNumber, ch.name, ch.logoUrl)
+                    }
+                }
                 OsdManager.OsdState.VOLUME -> {
                     // VolumeBar 由 showVolumeBar 直接控制显示
                 }
@@ -404,7 +406,7 @@ class LivePlayerActivity : AppCompatActivity() {
         hideStatusRunnable = null
     }
 
-    fun showChannelInfo(channel: Channel) {
+    fun showChannelInfo() {
         osdManager.show(OsdManager.OsdState.CHANNEL_INFO, 3000)
     }
 

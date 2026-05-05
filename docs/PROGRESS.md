@@ -1,7 +1,7 @@
 # 电视直播应用 — 进度追踪
 
 **项目**：Android 4.4.2 电视直播应用  
-**状态**：全部完成 🎉
+**状态**：阶段 A 进行中
 
 ---
 
@@ -35,6 +35,20 @@
 - 步骤 5.2 — 观看历史（自动记录、最多 100 条）
 - 步骤 5.3 — 性能优化（RecyclerView 稳定 ID、禁用动画、PlayerManager 表面释放）
 - 步骤 5.4 — 真机集成修复（注册 SourceHealthChecker、接入 AlarmManager 调度）
+
+### ▶️ 阶段 A：功能补全（本轮）
+- 步骤 A1 — 频道 Logo 显示（ChannelListAdapter + ChannelInfoBar 用 Glide 加载 logoUrl）
+- 步骤 A2 — EPG 信息显示（ChannelInfoBar 增加 EPG 节目文本）
+- 步骤 A3 — 响应时间统计（从 IJKPlayer 回调提取缓冲时间替代硬编码 0）
+
+### ⬜ 阶段 B：健壮性与测试
+- 步骤 B1 — LivePlayerPresenter 单元测试
+- 步骤 B2 — 源配置预置
+- 步骤 B3 — 颜色/尺寸抽取
+
+### ⬜ 阶段 C：质量与运维
+- 步骤 C1 — 清理 ijkplayer-exo 目录
+- 步骤 C2 — CI 配置
 
 ### 测试覆盖
 | 测试 | 类型 | 用例数 |
