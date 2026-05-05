@@ -44,6 +44,17 @@ object M3uParser {
 
         fun addSourceToChannel(epgId: String?, url: String) {
             val key = epgId ?: return
+            if (!channels.containsKey(key)) {
+                val name = currentName ?: return
+                channels[key] = ParsedChannel(
+                    name = name,
+                    epgId = key,
+                    logoUrl = currentLogo,
+                    category = currentCategory ?: "其他",
+                    sources = emptyList()
+                )
+                channelOrder.add(key)
+            }
             val existing = channels[key] ?: return
             val source = ParsedSource(
                 url = url,

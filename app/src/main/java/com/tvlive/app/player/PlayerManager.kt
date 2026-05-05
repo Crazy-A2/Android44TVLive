@@ -53,9 +53,9 @@ class PlayerManager {
             callback?.onInfo(what, extra)
             true
         }
-        p.setOnVideoSizeChangedListener { _, width, height ->
+        p.setOnVideoSizeChangedListener(IMediaPlayer.OnVideoSizeChangedListener { _, width, height, _, _ ->
             callback?.onVideoSizeChanged(width, height)
-        }
+        })
         p.prepareAsync()
         player = p
     }

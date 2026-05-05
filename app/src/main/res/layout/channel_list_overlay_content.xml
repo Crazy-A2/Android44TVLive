@@ -7,7 +7,7 @@
     <!-- 右侧频道列表面板 -->
     <RelativeLayout
         android:id="@+id/channel_panel"
-        android:layout_width="45%"
+        android:layout_width="480dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:background="#DD1A1A1A">

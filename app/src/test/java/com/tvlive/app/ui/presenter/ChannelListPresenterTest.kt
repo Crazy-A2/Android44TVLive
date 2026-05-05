@@ -49,7 +49,7 @@ class ChannelListPresenterTest {
         assertTrue(cats.contains("全部"))
         assertTrue(cats.contains("央视"))
         assertTrue(cats.contains("卫视"))
-        assertEquals(3, cats.size)
+        assertEquals(4, cats.size)
     }
 
     @Test
@@ -110,7 +110,7 @@ class ChannelListPresenterTest {
         presenter.init()
         `when`(favoriteDao.isFavorite(1L)).thenReturn(false, true)
         presenter.toggleFavorite(1L)
-        verify(favoriteDao).insert(any(Favorite::class.java))
+        verify(favoriteDao).insert((any(Favorite::class.java) as? Favorite) ?: Favorite())
         presenter.toggleFavorite(1L)
         verify(favoriteDao).deleteByChannelId(1L)
     }

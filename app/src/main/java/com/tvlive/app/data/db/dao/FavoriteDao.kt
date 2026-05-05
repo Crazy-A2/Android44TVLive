@@ -1,6 +1,6 @@
 package com.tvlive.app.data.db.dao
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.tvlive.app.data.db.entity.Favorite
 
 @Dao

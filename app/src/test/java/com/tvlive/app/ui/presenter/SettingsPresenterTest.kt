@@ -68,21 +68,21 @@ class SettingsPresenterTest {
     @Test
     fun `addSourceConfig inserts new config`() {
         presenter.addSourceConfig("测试源", "http://test", "m3u")
-        verify(sourceConfigDao).insert(any(SourceConfig::class.java))
+        verify(sourceConfigDao).insert((any(SourceConfig::class.java) as? SourceConfig) ?: SourceConfig())
     }
 
     @Test
     fun `deleteSourceConfig deletes by id`() {
         `when`(sourceConfigDao.getById(1L)).thenReturn(SourceConfig(id = 1, name = "A", url = "http://a"))
         presenter.deleteSourceConfig(1L)
-        verify(sourceConfigDao).delete(any(SourceConfig::class.java))
+        verify(sourceConfigDao).delete((any(SourceConfig::class.java) as? SourceConfig) ?: SourceConfig())
     }
 
     @Test
     fun `deleteSourceConfig does nothing if not found`() {
         `when`(sourceConfigDao.getById(1L)).thenReturn(null)
         presenter.deleteSourceConfig(1L)
-        verify(sourceConfigDao, never()).delete(any(SourceConfig::class.java))
+        verify(sourceConfigDao, never()).delete((any(SourceConfig::class.java) as? SourceConfig) ?: SourceConfig())
     }
 
     @Test

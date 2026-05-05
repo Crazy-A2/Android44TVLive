@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.view.KeyEvent
 import android.view.SurfaceView
 import android.view.View
@@ -341,7 +341,7 @@ class LivePlayerActivity : AppCompatActivity() {
                 return@Thread
             }
             val lastId = prefs.lastChannelId
-            val channel = if (lastId != -1L) db.channelDao().getById(lastId) else null
+            val channel = (if (lastId != -1L) db.channelDao().getById(lastId) else null)
                 ?: channels.first()
             val source = db.sourceDao().getBestSource(channel.id)
             runOnUiThread {

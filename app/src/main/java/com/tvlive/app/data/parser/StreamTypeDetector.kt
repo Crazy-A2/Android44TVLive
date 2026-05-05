@@ -3,12 +3,12 @@ package com.tvlive.app.data.parser
 object StreamTypeDetector {
 
     fun detect(url: String): String {
-        val lower = url.toLowerCase()
+        val clean = url.split("?", limit = 2)[0].toLowerCase()
         return when {
-            lower.endsWith(".m3u8") || lower.endsWith(".m3u") -> "hls"
-            lower.startsWith("rtmp://") -> "rtmp"
-            lower.startsWith("rtsp://") -> "rtsp"
-            lower.endsWith(".flv") -> "http-flv"
+            clean.endsWith(".m3u8") || clean.endsWith(".m3u") -> "hls"
+            url.startsWith("rtmp://", ignoreCase = true) -> "rtmp"
+            url.startsWith("rtsp://", ignoreCase = true) -> "rtsp"
+            clean.endsWith(".flv") -> "http-flv"
             else -> "other"
         }
     }

@@ -10,7 +10,7 @@ class OsdManager(private val handler: Handler) {
         private set
 
     var onStateChanged: ((OsdState) -> Unit)? = null
-        private set
+        internal set
 
     private var autoHideRunnable: Runnable? = null
 
