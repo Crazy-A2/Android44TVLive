@@ -2,16 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#CC000000">
+    android:background="@color/background_overlay">
 
     <!-- 设置面板 -->
     <LinearLayout
         android:id="@+id/settings_panel"
-        android:layout_width="640dp"
+        android:layout_width="@dimen/settings_panel_width"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:background="#FF333333"
+        android:background="@color/panel_header_background"
         android:padding="24dp"
         android:focusable="true">
 
@@ -20,19 +20,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="设置"
-            android:textSize="28sp"
-            android:textColor="#FFFFFFFF"
-            android:layout_marginBottom="16dp" />
+            android:textSize="@dimen/text_settings_title"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="@dimen/padding_large" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#555555" />
+            android:background="@color/panel_separator" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="@dimen/padding_small">
 
             <LinearLayout
                 android:id="@+id/settings_list"

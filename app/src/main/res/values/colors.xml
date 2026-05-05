@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主要背景 -->
+    <color name="background_black">#000000</color>
+    <color name="background_overlay">#CC000000</color>
+    <color name="background_light_overlay">#88000000</color>
+
+    <!-- 面板背景 -->
+    <color name="panel_background">#DD1A1A1A</color>
+    <color name="panel_alt_background">#FF2A2A2A</color>
+    <color name="panel_header_background">#FF333333</color>
+    <color name="panel_separator">#555555</color>
+
+    <!-- 文字颜色 -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#FFAAAAAA</color>
+    <color name="text_info">#FFCCCCCC</color>
+    <color name="text_favorite">#FFD700</color>
+    <color name="text_epg">#AAAAAA</color>
+
+    <!-- 选中/焦点 -->
+    <color name="selected_overlay">#66FFFFFF</color>
+    <color name="focused_overlay">#44FFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- 按钮/操作 -->
+    <color name="button_confirm">#FF4CAF50</color>
+    <color name="button_delete">#FFE53935</color>
+    <color name="hint_text">#88FFFFFF</color>
+    <color name="divider">#44444444</color>
+</resources>

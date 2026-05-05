@@ -44,7 +44,7 @@
 ### ⬜ 阶段 B：健壮性与测试
 - 步骤 B1 — LivePlayerPresenter 单元测试（23 个用例）✅
 - 步骤 B2 — 源配置预置（assets/default_source_configs.json + 首次启动加载）✅
-- 步骤 B3 — 颜色/尺寸抽取
+- 步骤 B3 — 颜色/尺寸抽取（colors.xml + dimens.xml，替换 4 个布局）✅
 
 ### ⬜ 阶段 C：质量与运维
 - 步骤 C1 — 清理 ijkplayer-exo 目录

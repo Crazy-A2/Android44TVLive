@@ -2,16 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/channel_item_root"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="@dimen/list_item_height"
     android:focusable="true"
     android:descendantFocusability="blocksDescendants"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp">
+    android:paddingLeft="@dimen/padding_medium"
+    android:paddingRight="@dimen/padding_medium">
 
     <ImageView
         android:id="@+id/item_channel_logo"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/channel_list_logo_size"
+        android:layout_height="@dimen/channel_list_logo_size"
         android:layout_centerVertical="true"
         android:scaleType="fitCenter"
         android:visibility="gone" />
@@ -22,9 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@id/item_channel_logo"
-        android:layout_marginStart="8dp"
-        android:textSize="18sp"
-        android:textColor="#FFAAAAAA"
+        android:layout_marginStart="@dimen/padding_small"
+        android:textSize="@dimen/text_channel_number_list"
+        android:textColor="@color/text_secondary"
         android:gravity="center_vertical" />
 
     <TextView
@@ -33,9 +33,9 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@id/item_channel_number"
-        android:layout_marginStart="12dp"
-        android:textSize="20sp"
-        android:textColor="#FFFFFFFF"
+        android:layout_marginStart="@dimen/padding_medium"
+        android:textSize="@dimen/text_channel_name_list"
+        android:textColor="@color/text_primary"
         android:gravity="center_vertical" />
 
     <TextView
@@ -44,8 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:textSize="20sp"
+        android:textSize="@dimen/text_fav_indicator"
         android:text="★"
-        android:textColor="#FFD700"
+        android:textColor="@color/text_favorite"
         android:visibility="gone" />
 </RelativeLayout>

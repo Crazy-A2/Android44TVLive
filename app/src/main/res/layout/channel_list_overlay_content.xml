@@ -2,22 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#88000000">
+    android:background="@color/background_light_overlay">
 
     <!-- 右侧频道列表面板 -->
     <RelativeLayout
         android:id="@+id/channel_panel"
-        android:layout_width="480dp"
+        android:layout_width="@dimen/overlay_panel_width"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:background="#DD1A1A1A">
+        android:background="@color/panel_background">
 
         <!-- 分类标签 -->
         <HorizontalScrollView
             android:id="@+id/category_scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FF2A2A2A"
+            android:background="@color/panel_alt_background"
             android:scrollbars="none">
 
             <LinearLayout
@@ -34,6 +34,6 @@
             android:layout_height="match_parent"
             android:layout_below="@id/category_scroll"
             android:clipToPadding="false"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="@dimen/padding_large" />
     </RelativeLayout>
 </RelativeLayout>
