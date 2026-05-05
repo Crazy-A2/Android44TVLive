@@ -2,4 +2,6 @@ CLAUDE.md
 .claude
 与 LLM 的对话.md
 */build/
-.gradle
+.gradle/5.6.4/*/.bin
+.gradle/5.6.4/*/.lock
+.gradle/buildOutputCleanup
