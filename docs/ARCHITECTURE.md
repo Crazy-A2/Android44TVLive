@@ -19,7 +19,8 @@ View (Activity + OSD 组件) ←→ Presenter ←→ Model (DB + Repository)
 
 ### 播放
 - `player/PlayerManager` — IJKPlayer 封装，支持 AUTO/SOFTWARE/HARDWARE 解码
-- `player/PlayerCallback` — onPrepared/onError/onInfo/onVideoSizeChanged
+- `player/PlayerCallback` — onPrepared/onError/onInfo/onVideoSizeChanged（IJK 版本 5 参，含 sar_num, sar_den）
+- IJKPlayer 为本地源码模块（`:ijkplayer-java`、`:ijkplayer-armv7a`），从 `ijkplayer-master.zip` 提取，因 jcenter 下线
 
 ### OSD 状态机
 `OsdManager` 管理状态：`IDLE → {CHANNEL_INFO, CHANNEL_LIST, SETTINGS, NUMBER_INPUT, VOLUME} → IDLE`
